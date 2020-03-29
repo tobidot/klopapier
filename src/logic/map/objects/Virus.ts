@@ -1,10 +1,9 @@
-import StaticMapObject from "./abstract/StaticMapObject";
+import LivingMapObject from "./abstract/LivingMapObject";
 import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import { Point } from "../../../ts_library/space/SimpleShapes";
 
-export default class Tree extends StaticMapObject {
+export default class Virus extends LivingMapObject {
     constructor(pos: Point) {
-        super(MapObjectTypeID.TREE, pos);
+        super(MapObjectTypeID.VIRUS, pos, 10);
     }
-
 }

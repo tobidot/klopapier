@@ -39,7 +39,7 @@ export default class InventarOnScreen {
                 const screen_x = x * this.cell_size.x + (this.cell_size.x - max_size) / 2;
                 const screen_y = y * this.cell_size.y + (this.cell_size.y - max_size) / 2 + 50;
 
-                const image = this.images.get(ImageID.OBJECTS_FIRE);
+                const image = this.images.get(ImageID.OBJECT__KLOPAPIER);
                 this.context.drawImage(image, screen_x, screen_y, max_size, max_size)
             });
         }

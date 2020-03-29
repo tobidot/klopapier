@@ -22,10 +22,10 @@ function assert_class_type<BASE, DERIVE extends BASE>(object: BASE, class_arg: {
 
 function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
     switch (terrain.type) {
-        case TerrainTypeID.GRAS:
-            return ImageID.TERRAIN_GRAS;
-        case TerrainTypeID.STONE:
-            return ImageID.TERRAIN_STONE;
+        case TerrainTypeID.INDOOR_SHOP:
+            return ImageID.TERRAIN__INDOOR_SHOP;
+        case TerrainTypeID.OUTDOOR_GRAS:
+            return ImageID.TERRAIN__OUTDOOR_GRAS;
         default:
             return null;
     }
@@ -34,25 +34,13 @@ function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
 function get_image_for_object_type(object: MapObject | null): ImageID | null {
     if (!object) return null;
     switch (object.type) {
-        case MapObjectTypeID.TREE:
-            return ImageID.OBJECTS_TREE;
-        case MapObjectTypeID.FLOWERS:
-            return ImageID.OBJECTS_FLOWERS;
-        case MapObjectTypeID.BOX:
-            return ImageID.OBJECTS_WOODEN_BOX;
-        case MapObjectTypeID.TREASURE_BOX_OPEN:
-            return ImageID.OBJECTS_WOODEN_BOX__OPEN;
-        case MapObjectTypeID.FIRE:
-            return ImageID.OBJECTS_FIRE;
-        case MapObjectTypeID.VASE_WITH_SIGN:
-            return ImageID.OBJECTS_VASE;
-        case MapObjectTypeID.BLOB:
-            return ImageID.MONSTER_BLOB;
-        case MapObjectTypeID.SNAKE:
-            return ImageID.MONSTER_SNAKE;
+        case MapObjectTypeID.KLOPAPIER:
+            return ImageID.OBJECT__KLOPAPIER;
+        case MapObjectTypeID.VIRUS:
+            return ImageID.UNIT__VIRUS;
         case MapObjectTypeID.PLAYER:
             if (assert_class_type(object, MovingMapObject)) {
-                return [ImageID.PLAYER_A_LEFT, ImageID.PLAYER_A_UP, ImageID.PLAYER_A_RIGHT, ImageID.PLAYER_A_DOWN][object.look_direction];
+                return [ImageID.UNIT__SMILEY_LEFT, ImageID.UNIT__SMILEY_UP, ImageID.UNIT__SMILEY_RIGHT, ImageID.UNIT__SMILEY_DOWN][object.look_direction];
             }
         default:
             console.error('No Image found for Object ' + object.type);
@@ -93,21 +81,15 @@ export default class WorldMapOnScreen {
         this.world_map.events.on_attack.add((event: ObjectAttacksEvent) => {
             const field = event.target;
             switch (event.attack_type) {
-                case DamageType.BLUNT:
-                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT_BLUNT, 0.5, 0.1));
+                case DamageType.SPRAY:
+                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT__SPRAY, 0.5, 0.1));
                     break;
-                case DamageType.CUT:
-                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT_SLASH, 0.5, 0.1));
-                    break;
-                case DamageType.FIRE:
-                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT_FIRE, 0.5, 0.1));
-                    break;
-                case DamageType.ICE:
-                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT_ICE, 0.5, 0.1));
+                case DamageType.INFECT:
+                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT__INFECT, 0.5, 0.1));
                     break;
                 default:
                     console.error('Unkown attack type');
-                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT_ICE, 0.5, 0.1));
+                    this.effects.push(new Effect(new Point(field.x, field.y), ImageID.EFFECT__INFECT, 0.5, 0.1));
                     break;
             }
         });

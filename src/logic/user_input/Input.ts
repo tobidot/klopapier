@@ -14,6 +14,7 @@ export class InputDelegator {
                 case "ArrowUp": this.on_direction_input && this.on_direction_input(Direction.UP); break;
                 case "ArrowRight": this.on_direction_input && this.on_direction_input(Direction.RIGHT); break;
                 case "ArrowDown": this.on_direction_input && this.on_direction_input(Direction.DOWN); break;
+                case "Shift": this.on_attack_input && this.on_attack_input(); break;
                 case "Space": this.on_attack_input && this.on_attack_input(); break;
             }
         });

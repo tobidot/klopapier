@@ -1,5 +1,4 @@
 import ImageManager from "./manager/ImageManager";
-import { ImageID, image_resources } from "./assets/ImageResources";
 import { randomBytes } from "crypto";
 import WorldMap, { FieldGenerator } from "./logic/map/WorldMap";
 import Terrain from "./logic/map/Terrain";
@@ -12,18 +11,13 @@ import WorldMapOnScreen from "./visualization/WorldMapOnScreen";
 import { InputDelegator } from "./logic/user_input/Input";
 import { Direction } from "./ts_library/space/Direction";
 import { direction_to_point } from "./ts_library/conversion/fromDirection";
-import { MapObjectTypeID } from "./assets/MapObjectResources";
-import MapObject from "./logic/map/objects/abstract/MapObject";
-import StaticMapObject from "./logic/map/objects/abstract/StaticMapObject";
-import Tree from "./logic/map/objects/Tree";
-import Vase from "./logic/map/objects/Vase";
 import MovingMapObject from "./logic/map/objects/abstract/MovingMapObject";
-import Snake from "./logic/map/objects/Snake";
-import Blob from "./logic/map/objects/Blob";
-import LivingMapObject from "./logic/map/objects/abstract/LivingMapObject";
 import { DamageType } from "./logic/fight/DamageType";
 import Agent from "./logic/map/objects/Player";
 import InventarOnScreen from "./visualization/InventarOnScreen";
+import Klopapier from "./logic/map/objects/Klopapier";
+import { image_resources } from "./assets/ImageResources";
+import Virus from "./logic/map/objects/Virus";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -77,8 +71,12 @@ export default class Game {
 
     private construct_world_map(): WorldMap<TerrainTypeID> {
         let field_generator: FieldGenerator = (x: number, y: number) => {
+            const possible_terrain = [
+                TerrainTypeID.INDOOR_SHOP,
+                TerrainTypeID.OUTDOOR_GRAS,
+            ];
             const terrain: Terrain = {
-                type: randomBytes(1).readUInt8(0) % TerrainTypeID.MAX,
+                type: possible_terrain[randomBytes(1).readUInt8(0) % possible_terrain.length],
                 variation_key: 'default',
             };
             return { x, y, object: null, terrain };
@@ -88,10 +86,8 @@ export default class Game {
 
         for (let i = 0; i < object_count; ++i) {
             const possible_objects = [
-                Tree,
-                Vase,
-                Blob,
-                Snake,
+                Klopapier,
+                Virus,
             ];
             const constructor = possible_objects[randomBytes(1).readUInt8(0) % possible_objects.length];
             let x = randomBytes(1).readUInt8(0) % map.width;
@@ -136,11 +132,11 @@ export default class Game {
         let target_pos = this.object.get_position().add(direction_to_point(direction, 1));
         let target_field = this.world_map.at(target_pos);
         if (target_field) {
-            this.object.attack(target_field, DamageType.CUT);
+            this.object.attack(target_field, DamageType.SPRAY);
         }
         if (target_field && target_field.object) {
             target_field.object.damage({
-                type: DamageType.BLUNT,
+                type: DamageType.SPRAY,
                 source: target_field.object,
                 amount: 1,
             });

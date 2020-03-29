@@ -1,0 +1,14 @@
+{
+  "name": "klopapier_protection",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "start": "parcel ./src/index.html"
+  },
+  "author": "tobidot <Object.name@live.de>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^13.9.5"
+  }
+}

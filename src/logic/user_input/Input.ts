@@ -1,10 +1,10 @@
 import { Direction } from "../../ts_library/space/Direction";
-import { KeyObject } from "crypto";
 
 export class InputDelegator {
     private element: HTMLElement;
     public on_direction_input?: (direction: Direction) => void;
     public on_attack_input?: () => void;
+    public on_use_input?: () => void;
 
     constructor(element: HTMLElement) {
         this.element = element;
@@ -14,7 +14,7 @@ export class InputDelegator {
                 case "ArrowUp": this.on_direction_input && this.on_direction_input(Direction.UP); break;
                 case "ArrowRight": this.on_direction_input && this.on_direction_input(Direction.RIGHT); break;
                 case "ArrowDown": this.on_direction_input && this.on_direction_input(Direction.DOWN); break;
-                case "Shift": this.on_attack_input && this.on_attack_input(); break;
+                case "ShiftLeft": case "ShiftRight": this.on_use_input && this.on_use_input(); break;
                 case "Space": this.on_attack_input && this.on_attack_input(); break;
             }
         });

@@ -15,7 +15,7 @@ export default class ComponentContainer<COMPONENT extends { name: string }> {
         return this.components.has(name);
     }
 
-    public get<TARGET extends COMPONENT>(component_class: { NAME: string }): TARGET | undefined {
+    public get<TARGET extends COMPONENT>(component_class: { new(...x: any): TARGET, NAME: string }): TARGET | undefined {
         return this.components.get(component_class.NAME) as TARGET;
     }
 }

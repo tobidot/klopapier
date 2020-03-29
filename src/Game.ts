@@ -18,6 +18,7 @@ import InventarOnScreen from "./visualization/InventarOnScreen";
 import Klopapier from "./logic/map/objects/Klopapier";
 import { image_resources } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
+import InventarComponent from "./logic/map/objects/components/InventarComponent";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -48,6 +49,7 @@ export default class Game {
         this.input_delegator = new InputDelegator(element);
         this.input_delegator.on_direction_input = this.on_input_direction;
         this.input_delegator.on_attack_input = this.on_input_attack;
+        this.input_delegator.on_use_input = this.on_input_use;
 
         this.world_map = this.construct_world_map();
         this.images = this.construct_image_manager();
@@ -149,6 +151,22 @@ export default class Game {
         if (target_field) {
             this.object.move_to(this.world_map, target_pos);
             this.camera_position = this.object.get_position();
+        }
+    }
+
+    on_input_use = () => {
+        const field_pos = this.object.get_position();
+        const inventar = this.object.components.get(InventarComponent);
+        if (inventar) {
+            if (inventar.items.length > 0 && this.world_map.at(field_pos)?.terrain.type !== TerrainTypeID.OUTDOOR_KLOPAPIER) {
+                inventar.items.shift();
+                this.world_map.update_field_at_point(field_pos, {
+                    terrain: {
+                        type: TerrainTypeID.OUTDOOR_KLOPAPIER,
+                        variation_key: 'default',
+                    }
+                });
+            }
         }
     }
 }

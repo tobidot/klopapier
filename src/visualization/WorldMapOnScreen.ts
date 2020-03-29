@@ -26,6 +26,8 @@ function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
             return ImageID.TERRAIN__INDOOR_SHOP;
         case TerrainTypeID.OUTDOOR_GRAS:
             return ImageID.TERRAIN__OUTDOOR_GRAS;
+        case TerrainTypeID.OUTDOOR_KLOPAPIER:
+            return ImageID.TERRAIN__OUTDOOR_KLOPAPIER;
         default:
             return null;
     }

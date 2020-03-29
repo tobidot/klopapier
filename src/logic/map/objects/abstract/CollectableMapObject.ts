@@ -1,5 +1,5 @@
 import MapObject from "./MapObject";
-import { MapObjectTypeID } from "../../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../../assets/MapObjectResources";
 import { Point } from "../../../../ts_library/space/SimpleShapes";
 
 export default class CollectableMapObject extends MapObject {

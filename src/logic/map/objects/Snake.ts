@@ -1,6 +1,6 @@
 import StaticMapObject from "./abstract/StaticMapObject";
 import { Point } from "../../../ts_library/space/SimpleShapes";
-import { MapObjectTypeID } from "../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import LivingMapObject from "./abstract/LivingMapObject";
 
 export default class Snake extends LivingMapObject {

@@ -12,7 +12,7 @@ import WorldMapOnScreen from "./visualization/WorldMapOnScreen";
 import { InputDelegator } from "./logic/user_input/Input";
 import { Direction } from "./ts_library/space/Direction";
 import { direction_to_point } from "./ts_library/conversion/fromDirection";
-import { MapObjectTypeID } from "./assets/MapObjectRsources";
+import { MapObjectTypeID } from "./assets/MapObjectResources";
 import MapObject from "./logic/map/objects/abstract/MapObject";
 import StaticMapObject from "./logic/map/objects/abstract/StaticMapObject";
 import Tree from "./logic/map/objects/Tree";

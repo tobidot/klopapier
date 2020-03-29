@@ -1,4 +1,4 @@
-import { MapObjectTypeID } from "../../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../../assets/MapObjectResources";
 import { ValueChangeListenerSocket } from "../../../../ts_library/ui/Listener";
 import { ValueChangeFilterSocket } from "../../../../ts_library/ui/Filter";
 import { DamageType } from "../../../fight/DamageType";

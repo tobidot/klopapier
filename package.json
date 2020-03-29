@@ -4,11 +4,15 @@
   "main": "index.ts",
   "scripts": {
     "tsc": "tsc",
-    "start": "parcel ./src/index.html"
+    "start": "npx parcel ./src/index.html"
   },
   "author": "tobidot <Object.name@live.de>",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^13.9.5"
+  },
+  "devDependencies": {
+    "sass": "^1.26.3",
+    "typescript": "^3.8.3"
   }
 }

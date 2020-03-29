@@ -1,5 +1,5 @@
 import LivingMapObject from "./abstract/LivingMapObject"
-import { MapObjectTypeID } from "../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import InventarComponent from "./components/InventarComponent";
 import { Point } from "../../../ts_library/space/SimpleShapes";
 

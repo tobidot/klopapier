@@ -6,7 +6,7 @@ import { ImageID, image_resources } from "../assets/ImageResources";
 import ImageManager from "../manager/ImageManager";
 import Terrain from "../logic/map/Terrain";
 import MapObject from "../logic/map/objects/abstract/MapObject";
-import { MapObjectTypeID } from "../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../assets/MapObjectResources";
 import MovingMapObject from "../logic/map/objects/abstract/MovingMapObject";
 import LivingMapObject from "../logic/map/objects/abstract/LivingMapObject";
 import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectDamagedEvent } from "../logic/map/Events";

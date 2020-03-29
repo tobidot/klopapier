@@ -9,4 +9,4 @@ export enum MapObjectTypeID {
     BLOB,
     SNAKE,
     MAX
-}
+};

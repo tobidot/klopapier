@@ -1,6 +1,6 @@
 import { Point } from "../../../ts_library/space/SimpleShapes";
 import StaticMapObject from "./abstract/StaticMapObject";
-import { MapObjectTypeID } from "../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import LivingMapObject from "./abstract/LivingMapObject";
 
 export default class Blob extends LivingMapObject {

@@ -1,7 +1,7 @@
 import MapObject from "./MapObject";
 import MovingMapObject from "./MovingMapObject";
 import DamageDescription from "../../../fight/DamageDescription";
-import { MapObjectTypeID } from "../../../../assets/MapObjectRsources";
+import { MapObjectTypeID } from "../../../../assets/MapObjectResources";
 import { Point } from "../../../../ts_library/space/SimpleShapes";
 
 export default class LivingMapObject extends MovingMapObject {

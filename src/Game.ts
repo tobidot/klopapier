@@ -19,6 +19,7 @@ import Klopapier from "./logic/map/objects/Klopapier";
 import { image_resources } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
 import InventarComponent from "./logic/map/objects/components/InventarComponent";
+import MapObject from "./logic/map/objects/abstract/MapObject";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -30,6 +31,7 @@ export default class Game {
     private input_delegator: InputDelegator;
 
     private object: MovingMapObject;
+    private objects: Array<MapObject>;
 
     private visualizers: {
         fps_counter: (print: number) => void,
@@ -51,6 +53,7 @@ export default class Game {
         this.input_delegator.on_attack_input = this.on_input_attack;
         this.input_delegator.on_use_input = this.on_input_use;
 
+        this.objects = [];
         this.world_map = this.construct_world_map();
         this.images = this.construct_image_manager();
         this.images.on_progress_listener.add(([progress, image]) => {
@@ -94,7 +97,8 @@ export default class Game {
             const constructor = possible_objects[randomBytes(1).readUInt8(0) % possible_objects.length];
             let x = randomBytes(1).readUInt8(0) % map.width;
             let y = randomBytes(1).readUInt8(0) % map.height;
-            let object = new constructor(new Point(x, y));
+            let object = new constructor(map, new Point(x, y));
+            this.objects.push(object);
             map.add_object(object);
         }
 
@@ -116,8 +120,11 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
+        this.objects = this.objects.filter((object: MapObject) => {
+            object.update(delta_seconds);
+            return !object.is_destroyed();
+        });
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
-            //field.object.update();
             return field;
         });
     }
@@ -158,12 +165,13 @@ export default class Game {
         const field_pos = this.object.get_position();
         const inventar = this.object.components.get(InventarComponent);
         if (inventar) {
-            if (inventar.items.length > 0 && this.world_map.at(field_pos)?.terrain.type !== TerrainTypeID.OUTDOOR_KLOPAPIER) {
+            const old_field = this.world_map.at(field_pos);
+            if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key !== 'with_paper') {
                 inventar.items.shift();
                 this.world_map.update_field_at_point(field_pos, {
                     terrain: {
-                        type: TerrainTypeID.OUTDOOR_KLOPAPIER,
-                        variation_key: 'default',
+                        type: old_field.terrain.type,
+                        variation_key: 'with_paper',
                     }
                 });
             }

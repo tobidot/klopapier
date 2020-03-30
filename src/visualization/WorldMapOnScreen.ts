@@ -23,11 +23,15 @@ function assert_class_type<BASE, DERIVE extends BASE>(object: BASE, class_arg: {
 function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
     switch (terrain.type) {
         case TerrainTypeID.INDOOR_SHOP:
-            return ImageID.TERRAIN__INDOOR_SHOP;
+            switch (terrain.variation_key) {
+                case 'with_paper': return ImageID.TERRAIN__INDOOR_SHOP_WITH_PAPER;
+                default: return ImageID.TERRAIN__INDOOR_SHOP;
+            }
         case TerrainTypeID.OUTDOOR_GRAS:
-            return ImageID.TERRAIN__OUTDOOR_GRAS;
-        case TerrainTypeID.OUTDOOR_KLOPAPIER:
-            return ImageID.TERRAIN__OUTDOOR_KLOPAPIER;
+            switch (terrain.variation_key) {
+                case 'with_paper': return ImageID.TERRAIN__OUTDOOR_GRAS_WITH_PAPER;
+                default: return ImageID.TERRAIN__OUTDOOR_GRAS;
+            }
         default:
             return null;
     }

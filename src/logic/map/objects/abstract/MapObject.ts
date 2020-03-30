@@ -94,4 +94,8 @@ export default abstract class MapObject {
     public is_destroyed(): boolean {
         return this._is_destroyed;
     }
+
+    public update(delta_seconds: number) {
+        this.components.update(delta_seconds);
+    }
 }

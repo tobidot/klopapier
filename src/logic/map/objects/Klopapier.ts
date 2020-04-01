@@ -4,8 +4,8 @@ import { Point } from "../../../ts_library/space/SimpleShapes";
 import WorldMap from "../WorldMap";
 import { TerrainTypeID } from "../../../assets/TerrainResources";
 
-export default class Klopapier extends CollectableMapObject {
+export default class Paperroll extends CollectableMapObject {
     constructor(map: WorldMap<TerrainTypeID>, pos: Point) {
-        super(MapObjectTypeID.KLOPAPIER, pos, 'klopapier');
+        super(MapObjectTypeID.PAPER_ROLL, pos, 'paperroll');
     }
 }

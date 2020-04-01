@@ -1,6 +1,6 @@
 export enum MapObjectTypeID {
     PLAYER,
-    KLOPAPIER,
+    PAPER_ROLL,
     SPRAY,
     NUDEL,
     VIRUS,

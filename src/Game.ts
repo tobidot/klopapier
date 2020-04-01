@@ -15,7 +15,7 @@ import MovingMapObject from "./logic/map/objects/abstract/MovingMapObject";
 import { DamageType } from "./logic/fight/DamageType";
 import Agent from "./logic/map/objects/Agent";
 import InventarOnScreen from "./visualization/InventarOnScreen";
-import Klopapier from "./logic/map/objects/Klopapier";
+import Paperroll from "./logic/map/objects/Klopapier";
 import { image_resources } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
 import InventarComponent from "./logic/map/objects/components/InventarComponent";
@@ -97,7 +97,7 @@ export default class Game {
             const possible_objects = [
                 Spray,
                 Nudel,
-                Klopapier,
+                Paperroll,
                 Virus,
             ];
             const constructor = possible_objects[randomBytes(1).readUInt8(0) % possible_objects.length];

@@ -39,10 +39,19 @@ export default class InventarOnScreen {
                 const screen_x = x * this.cell_size.x + (this.cell_size.x - max_size) / 2;
                 const screen_y = y * this.cell_size.y + (this.cell_size.y - max_size) / 2 + 50;
 
-                const image = this.images.get(ImageID.OBJECT__KLOPAPIER);
+                const image = this.get_image_for_inventar_item(item);
                 this.context.drawImage(image, screen_x, screen_y, max_size, max_size)
             });
         }
         this.context.resetTransform();
+    }
+
+    public get_image_for_inventar_item(name: string): HTMLImageElement {
+        switch (name) {
+            case 'paperroll': return this.images.get(ImageID.OBJECT__PAPER_ROLL);
+            case 'spray': return this.images.get(ImageID.OBJECT__SPRAY);
+            case 'nudel': return this.images.get(ImageID.OBJECT__NUDEL);
+            default: return this.images.get(ImageID.OTHER__ERROR);
+        }
     }
 }

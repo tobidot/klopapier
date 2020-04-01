@@ -25,11 +25,13 @@ function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
         case TerrainTypeID.INDOOR_SHOP:
             switch (terrain.variation_key) {
                 case 'with_paper': return ImageID.TERRAIN__INDOOR_SHOP_WITH_PAPER;
+                case 'with_spray': return ImageID.TERRAIN__INDOOR_SHOP_WITH_SPRAY;
                 default: return ImageID.TERRAIN__INDOOR_SHOP;
             }
         case TerrainTypeID.OUTDOOR_GRAS:
             switch (terrain.variation_key) {
                 case 'with_paper': return ImageID.TERRAIN__OUTDOOR_GRAS_WITH_PAPER;
+                case 'with_spray': return ImageID.TERRAIN__OUTDOOR_GRAS_WITH_SPRAY;
                 default: return ImageID.TERRAIN__OUTDOOR_GRAS;
             }
         default:
@@ -40,8 +42,14 @@ function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
 function get_image_for_object_type(object: MapObject | null): ImageID | null {
     if (!object) return null;
     switch (object.type) {
-        case MapObjectTypeID.KLOPAPIER:
-            return ImageID.OBJECT__KLOPAPIER;
+        case MapObjectTypeID.PAPER_ROLL:
+            return ImageID.OBJECT__PAPER_ROLL;
+        case MapObjectTypeID.NUDEL:
+            return ImageID.OBJECT__NUDEL;
+        case MapObjectTypeID.SPRAY:
+            return ImageID.OBJECT__SPRAY;
+        case MapObjectTypeID.WALL:
+            return ImageID.OBJECT__WALL;
         case MapObjectTypeID.VIRUS:
             return ImageID.UNIT__VIRUS;
         case MapObjectTypeID.PLAYER:

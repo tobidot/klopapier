@@ -13,20 +13,22 @@ import { Direction } from "./ts_library/space/Direction";
 import { direction_to_point } from "./ts_library/conversion/fromDirection";
 import MovingMapObject from "./logic/map/objects/abstract/MovingMapObject";
 import { DamageType } from "./logic/fight/DamageType";
-import Agent from "./logic/map/objects/Player";
+import Agent from "./logic/map/objects/Agent";
 import InventarOnScreen from "./visualization/InventarOnScreen";
 import Klopapier from "./logic/map/objects/Klopapier";
 import { image_resources } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
 import InventarComponent from "./logic/map/objects/components/InventarComponent";
 import MapObject from "./logic/map/objects/abstract/MapObject";
+import Nudel from "./logic/map/objects/Nudel";
+import Spray from "./logic/map/objects/Spray";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
     private images: ImageManager;
     private world_map: WorldMap<TerrainTypeID>;
     //private players: Array<Player>;
-    private fps_counter: FpsCounter = new FpsCounter(60);
+    private fps_counter: FpsCounter = new FpsCounter(60, 60);
     private camera_position: Point;
     private input_delegator: InputDelegator;
 
@@ -51,7 +53,9 @@ export default class Game {
         this.input_delegator = new InputDelegator(element);
         this.input_delegator.on_direction_input = this.on_input_direction;
         this.input_delegator.on_attack_input = this.on_input_attack;
-        this.input_delegator.on_use_input = this.on_input_use;
+        this.input_delegator.on_use_paper = this.on_input_use_paper;
+        this.input_delegator.on_use_spray = this.on_input_use_spray;
+        this.input_delegator.on_eat = this.on_input_eat;
 
         this.objects = [];
         this.world_map = this.construct_world_map();
@@ -91,6 +95,8 @@ export default class Game {
 
         for (let i = 0; i < object_count; ++i) {
             const possible_objects = [
+                Spray,
+                Nudel,
                 Klopapier,
                 Virus,
             ];
@@ -137,6 +143,9 @@ export default class Game {
     }
 
     on_input_attack = () => {
+        const inventar = this.object.components.get(InventarComponent);
+        if (!inventar || inventar.has('spray') === false) return;
+
         let direction = this.object.look_direction;
         let target_pos = this.object.get_position().add(direction_to_point(direction, 1));
         let target_field = this.world_map.at(target_pos);
@@ -161,20 +170,28 @@ export default class Game {
         }
     }
 
-    on_input_use = () => {
+    on_input_use_paper = () => {
         const field_pos = this.object.get_position();
         const inventar = this.object.components.get(InventarComponent);
-        if (inventar) {
-            const old_field = this.world_map.at(field_pos);
-            if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key !== 'with_paper') {
-                inventar.items.shift();
-                this.world_map.update_field_at_point(field_pos, {
-                    terrain: {
-                        type: old_field.terrain.type,
-                        variation_key: 'with_paper',
-                    }
-                });
-            }
+        if (!inventar || inventar.has('klopapier') === false) return;
+
+        const old_field = this.world_map.at(field_pos);
+        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key !== 'with_paper') {
+            inventar.items.shift();
+            this.world_map.update_field_at_point(field_pos, {
+                terrain: {
+                    type: old_field.terrain.type,
+                    variation_key: 'with_paper',
+                }
+            });
         }
+    }
+
+    on_input_use_spray = () => {
+
+    }
+
+    on_input_eat = () => {
+
     }
 }

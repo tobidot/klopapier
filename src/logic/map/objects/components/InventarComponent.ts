@@ -20,4 +20,12 @@ export default class InventarComponent extends MapObjectComponent {
             }
         });
     }
+
+    public has(item: string) {
+        return this.items.includes(item);
+    }
+
+    public remove(item: string) {
+        this.items = this.items.filter((current) => current !== item);
+    }
 }

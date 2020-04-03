@@ -7,10 +7,12 @@ export class InputDelegator {
     public on_use_paper?: () => void;
     public on_use_spray?: () => void;
     public on_eat?: () => void;
+    public game_over: boolean = false;
 
     constructor(element: HTMLElement) {
         this.element = element;
         this.element.onkeydown = ((event: KeyboardEvent) => {
+            if (this.game_over) return;
             switch (event.code) {
                 case "ArrowLeft": this.on_direction_input && this.on_direction_input(Direction.LEFT); break;
                 case "ArrowUp": this.on_direction_input && this.on_direction_input(Direction.UP); break;

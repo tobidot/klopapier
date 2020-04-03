@@ -1,4 +1,5 @@
 export enum DamageType {
     SPRAY,
-    INFECT
+    INFECT,
+    TRUE
 }

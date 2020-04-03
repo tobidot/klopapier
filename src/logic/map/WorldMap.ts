@@ -47,10 +47,10 @@ export default class WorldMap<TerrainTypeID> {
         object.on_before_position_change.add((is_allowed: boolean, event: { old: Field, new: Field }): boolean => {
             const target_field = event.new;
             if (!target_field) return false;
-            const object = target_field.object;
-            if (object !== null) {
-                object.touched_by(object);
-                if (!object.is_destroyed() && object.get_position().equals(new Point(event.new.x, event.new.y))) return false;
+            const target_object = target_field.object;
+            if (target_object !== null) {
+                target_object.touched_by(object);
+                return false;
             }
             return is_allowed;
         });

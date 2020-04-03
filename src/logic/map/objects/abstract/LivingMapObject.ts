@@ -19,4 +19,8 @@ export default class LivingMapObject extends MovingMapObject {
         if (this.hitpoints < 0) this.destroy();
         return this;
     }
+
+    public get_health_percentage(): number {
+        return this.hitpoints / this.max_hitpoints;
+    }
 }

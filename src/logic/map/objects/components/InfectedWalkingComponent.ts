@@ -34,7 +34,7 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                         const target = this.object.get_position().add(direction_to_point(direction, 1));
                         const field = this.map.at(target);
                         if (!field) return list;
-                        if (field.terrain.variation_key === 'paper') return list;
+                        if (field.terrain.variation_key === 'with_paper') return list;
                         if (!field.object) {
                             list.push(direction);
                             return list;

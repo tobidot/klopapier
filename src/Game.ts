@@ -22,6 +22,9 @@ import InventarComponent from "./logic/map/objects/components/InventarComponent"
 import MapObject from "./logic/map/objects/abstract/MapObject";
 import Nudel from "./logic/map/objects/Nudel";
 import Spray from "./logic/map/objects/Spray";
+import HungerOnScreen from "./visualization/HungerOnScreen";
+import HungerComponent from "./logic/map/objects/components/HungerComponent";
+import LifeOnScreen from "./visualization/LifeOnScreen";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -39,6 +42,8 @@ export default class Game {
         fps_counter: (print: number) => void,
         world_map: WorldMapOnScreen,
         inventar: InventarOnScreen,
+        hunger: HungerOnScreen,
+        life: LifeOnScreen,
     };
 
     constructor(element: HTMLElement) {
@@ -68,11 +73,14 @@ export default class Game {
             fps_counter: display_number_on_screen(this.context)(0, 0),
             world_map: WorldMapOnScreen.build()(this.context)(this.images)(this.world_map)(new Point(19, 14))(32),
             inventar: new InventarOnScreen(this.context, this.images, new Point(150, 600), new Point(2, 8)),
+            hunger: new HungerOnScreen(this.context, this.images, Rect.from_boundries(0, 500, 550, 600)),
+            life: new LifeOnScreen(this.context, this.images, Rect.from_boundries(0, 550, 600, 600)),
         };
 
         {
             this.object = new Agent(new Point(20, 19));
             this.world_map.add_object(this.object);
+            this.objects.push(this.object);
         }
 
         this.camera_position = this.object.get_position();
@@ -133,12 +141,21 @@ export default class Game {
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
             return field;
         });
+
     }
 
     draw(delta_seconds: number) {
         this.context.clearRect(0, 0, 800, 600);
+        if (this.object.is_destroyed()) {
+            this.context.fillStyle = 'red';
+            this.context.fillText('Game Over', 50, 50, 200);
+            this.input_delegator.game_over = true;
+            return;
+        }
         this.visualizers.world_map.set_camera(this.camera_position).display(delta_seconds);
         this.visualizers.inventar.display(this.object);
+        this.visualizers.hunger.display(this.object);
+        this.visualizers.life.display(this.object);
         this.visualizers.fps_counter(this.fps_counter.get_current_fps());
     }
 
@@ -173,11 +190,11 @@ export default class Game {
     on_input_use_paper = () => {
         const field_pos = this.object.get_position();
         const inventar = this.object.components.get(InventarComponent);
-        if (!inventar || inventar.has('klopapier') === false) return;
+        if (!inventar || inventar.has('paperroll') === false) return;
 
         const old_field = this.world_map.at(field_pos);
-        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key !== 'with_paper') {
-            inventar.items.shift();
+        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key === 'default') {
+            inventar.remove('paperroll');
             this.world_map.update_field_at_point(field_pos, {
                 terrain: {
                     type: old_field.terrain.type,
@@ -188,10 +205,29 @@ export default class Game {
     }
 
     on_input_use_spray = () => {
+        const field_pos = this.object.get_position();
+        const inventar = this.object.components.get(InventarComponent);
+        if (!inventar || inventar.has('spray') === false) return;
 
+        const old_field = this.world_map.at(field_pos);
+        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key === 'default') {
+            inventar.remove('spray');
+            this.world_map.update_field_at_point(field_pos, {
+                terrain: {
+                    type: old_field.terrain.type,
+                    variation_key: 'with_spray',
+                }
+            });
+        }
     }
 
     on_input_eat = () => {
+        const inventar = this.object.components.get(InventarComponent);
+        const hunger = this.object.components.get(HungerComponent);
+        if (!inventar || inventar.has('nudel') === false) return;
+        inventar.remove('nudel');
+        if (!hunger) return;
+        hunger.urge_to_eat = Math.max(0, hunger.urge_to_eat - 40);
 
     }
 }

@@ -6,18 +6,16 @@ export default class InventarComponent extends MapObjectComponent {
     public static NAME = "inventar";
     public money: number = 0;
     public items: Array<string> = [];
+    public size: number = 12;
+    public holding: MapObject | null = null;
 
     public constructor(object: MapObject) {
         super(InventarComponent.NAME);
-        object.on_position_change.add((event: { new: { object: any; }; }) => {
-            const object = event.new.object;
-            if (object instanceof CollectableMapObject) {
-                if (typeof object.collectable === 'number') {
-                    this.money += object.collectable;
-                } else {
-                    this.items.push(object.collectable);
-                }
-            }
+        object.on_position_change.add((event) => {
+            // if (this.holding) {
+            //     event.old.object = this.holding;
+            //     this.holding = null;
+            // }
         });
     }
 
@@ -26,6 +24,13 @@ export default class InventarComponent extends MapObjectComponent {
     }
 
     public remove(item: string) {
-        this.items = this.items.filter((current) => current !== item);
+        let found = false;
+        this.items = this.items.filter((current) => {
+            if (!found && current === item) {
+                found = true;
+                return false;
+            }
+            return true;
+        });
     }
 }

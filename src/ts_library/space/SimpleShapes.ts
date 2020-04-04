@@ -49,6 +49,10 @@ export class Point implements IPoint {
         return this;
     }
 
+    public map(fn: (value: number) => number) {
+        return new Point(fn(this.x), fn(this.y));
+    }
+
     public static create_random_direction(): Point {
         let x = Math.trunc(Math.random() * 3) - 1;
         let y = Math.trunc(Math.random() * 3) - 1;

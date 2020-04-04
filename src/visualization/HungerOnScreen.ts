@@ -18,13 +18,17 @@ export default class HungerOnScreen {
     display(object: MapObject) {
         const hunger = object.components.get(HungerComponent);
         if (!hunger) return;
-        const bar_width = this.display_rect.width() - 50;
+        const bar_width = this.display_rect.width();
+        const percentage = 1 - (hunger.urge_to_eat / 100.0);
 
-        this.context.fillStyle = "yellow";
         this.context.font = "32px sans-serif";
 
-        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width / 100.0 * hunger.urge_to_eat, this.display_rect.height() * 0.25);
-        this.context.fillText('Hunger', bar_width / 100.0 * hunger.urge_to_eat, this.display_rect.top + 20);
+        this.context.fillStyle = "gray";
+        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width, this.display_rect.height());
+        this.context.fillStyle = "yellow";
+        this.context.fillRect(this.display_rect.left, this.display_rect.top, percentage * bar_width, this.display_rect.height());
+        this.context.fillStyle = "black";
+        this.context.fillText('Hunger', Math.max(10, percentage * bar_width - 130), this.display_rect.top + this.display_rect.height() / 2 + 12);
 
     }
 }

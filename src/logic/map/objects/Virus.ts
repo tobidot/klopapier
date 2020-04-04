@@ -17,6 +17,8 @@ export default class Virus extends LivingMapObject {
         walking.steps_interval_in_seconds = 0.25;
         let spread = new InfectedSpreadComponent(map, this);
         this.components.add(spread);
+        spread.steps_interval_in_seconds = 2;
+        spread.chance_to_duplicate = 0.05;
         let die_on_spray = new DieOnSprayComponent(this);
         this.components.add(die_on_spray);
     }

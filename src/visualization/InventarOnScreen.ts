@@ -19,7 +19,7 @@ export default class InventarOnScreen {
         this.context = context;
         this.cell_size = new Point(
             this.display_size.x / this.slot_page_size.x,
-            (this.display_size.y - this.display_money_height) / this.slot_page_size.y
+            (this.display_size.y) / this.slot_page_size.y
         );
     }
 
@@ -29,15 +29,18 @@ export default class InventarOnScreen {
         if (inventar) {
             this.context.font = '32px';
             this.context.fillStyle = 'yellow';
-            this.context.fillText(inventar.money.toString() + '$', 16, 32);
+            //this.context.fillText(inventar.money.toString() + '$', 16, 32);
+            this.context.fillStyle = '#4e220d';
+            this.context.fillRect(0, 0, this.display_size.x, this.display_size.y);
+
 
             const items_per_page = this.slot_page_size.x * this.slot_page_size.y;
             inventar.items.slice(0, items_per_page).forEach((item, index) => {
-                const x = index % this.slot_page_size.x
+                const x = index % this.slot_page_size.x;
                 const y = Math.trunc(index / this.slot_page_size.x);
-                const max_size = Math.min(this.cell_size.x, this.cell_size.y) - 20;
+                const max_size = Math.min(this.cell_size.x, this.cell_size.y);
                 const screen_x = x * this.cell_size.x + (this.cell_size.x - max_size) / 2;
-                const screen_y = y * this.cell_size.y + (this.cell_size.y - max_size) / 2 + 50;
+                const screen_y = y * this.cell_size.y + (this.cell_size.y - max_size) / 2;
 
                 const image = this.get_image_for_inventar_item(item);
                 this.context.drawImage(image, screen_x, screen_y, max_size, max_size)
@@ -49,6 +52,8 @@ export default class InventarOnScreen {
     public get_image_for_inventar_item(name: string): HTMLImageElement {
         switch (name) {
             case 'paperroll': return this.images.get(ImageID.OBJECT__PAPER_ROLL);
+            case 'paperroll_half': return this.images.get(ImageID.OBJECT__PAPER_ROLL_HALF);
+            case 'paperroll_last': return this.images.get(ImageID.OBJECT__PAPER_ROLL_LAST);
             case 'spray': return this.images.get(ImageID.OBJECT__SPRAY);
             case 'nudel': return this.images.get(ImageID.OBJECT__NUDEL);
             default: return this.images.get(ImageID.OTHER__ERROR);

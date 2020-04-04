@@ -83,14 +83,14 @@ export default class Game {
         this.visualizers = {
             fps_counter: display_number_on_screen(this.context)(0, 0),
             world_map: WorldMapOnScreen.build()(this.context)(this.images)(this.world_map)(new Point(19, 14))(32),
-            inventar: new InventarOnScreen(this.context, this.images, new Point(150, 600), new Point(2, 8)),
-            hunger: new HungerOnScreen(this.context, this.images, Rect.from_boundries(0, 500, 550, 600)),
-            life: new LifeOnScreen(this.context, this.images, Rect.from_boundries(0, 550, 600, 600)),
+            inventar: new InventarOnScreen(this.context, this.images, new Point(150, 500), new Point(2, 8)),
+            hunger: new HungerOnScreen(this.context, this.images, Rect.from_boundries(0, 500, 650, 550)),
+            life: new LifeOnScreen(this.context, this.images, Rect.from_boundries(0, 550, 650, 600)),
             daytime: new DayTimeOnScreen(this.context, this.images, Rect.from_boundries(650, 500, 800, 600)),
         };
 
         {
-            this.object = new Agent(new Point(20, 19));
+            this.object = new Agent(this.world_map.get_map_boundries().get_random_point().map(Math.floor));
             this.world_map.add_object(this.object);
             this.objects.push(this.object);
         }
@@ -138,11 +138,15 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
-        this.to_add_objects.map((object: MapObject) => {
-            this.objects.push(object);
-            this.world_map.add_object(object);
+        this.to_add_objects = this.to_add_objects.filter((object: MapObject) => {
+            const field = this.world_map.at(object.get_position());
+            if (field) {
+                if (field.object) return true;
+                this.objects.push(object);
+                this.world_map.add_object(object);
+            }
+            return false;
         });
-        this.to_add_objects = [];
         this.objects = this.objects.filter((object: MapObject) => {
             object.update(delta_seconds);
             return !object.is_destroyed();
@@ -216,11 +220,20 @@ export default class Game {
     on_input_use_paper = () => {
         const field_pos = this.object.get_position();
         const inventar = this.object.components.get(InventarComponent);
-        if (!inventar || inventar.has('paperroll') === false) return;
-
+        if (!inventar) return;
+        const has = inventar.has('paperroll') || inventar.has('paperroll_half') || inventar.has('paperroll_last');
+        if (!has) return;
         const old_field = this.world_map.at(field_pos);
-        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key === 'default') {
-            inventar.remove('paperroll');
+        if (old_field && old_field.terrain.variation_key === 'default') {
+            if (inventar.has('paperroll_last')) {
+                inventar.remove('paperroll_last');
+            } else if (inventar.has('paperroll_half')) {
+                inventar.remove('paperroll_half');
+                inventar.items.push('paperroll_last')
+            } else if (inventar.has('paperroll')) {
+                inventar.remove('paperroll');
+                inventar.items.push('paperroll_half')
+            }
             this.world_map.update_field_at_point(field_pos, {
                 terrain: {
                     type: old_field.terrain.type,

@@ -32,7 +32,6 @@ const house2 = data.add_snippet([
 ], 6, 5);
 
 data.put(house, 0, 0);
-
 data.put(house2, 0, 8);
 
 for (let i = 0; i < 5; ++i) {

@@ -7,7 +7,7 @@ import { callbackify } from "util";
 import { ListenerSocket } from "../../ts_library/ui/Listener";
 import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectTouchedEvent, ObjectDamagedEvent, ObjectTouchesEvent } from "./Events";
 
-export type FieldGenerator = (x: number, y: number) => Field;
+export type FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => Field;
 // export type TerrainTypeMap = Map<TerrainTypeID, TerrainType>;
 export type FieldCallback = (field: Field) => Field;
 
@@ -16,19 +16,21 @@ export default class WorldMap<TerrainTypeID> {
     public readonly height: number;
     public readonly events: WorldEventDelegator;
     private fields: Array<Field> = [];
-    private field_generator: FieldGenerator;
+    private field_generator: FieldGenerator<TerrainTypeID>;
 
-    private constructor(width: number, height: number, field_generator: FieldGenerator) {
+    private constructor(width: number, height: number, field_generator: FieldGenerator<TerrainTypeID>) {
         this.width = width;
         this.height = height;
+        this.events = new WorldEventDelegator();
         this.field_generator = field_generator;
         this.fields = this.construct_fields();
-        this.events = new WorldEventDelegator();
     }
 
     private construct_fields() {
         return [...new Array<Field>(this.width * this.height)].map((_, i) => {
-            return this.field_generator(i % this.width, Math.trunc(i / this.width));
+            const field = this.field_generator(this, i % this.width, Math.trunc(i / this.width));
+            if (field.object) this.add_object(field.object);
+            return field;
         });
     }
 
@@ -77,9 +79,9 @@ export default class WorldMap<TerrainTypeID> {
         });
     }
 
-    public static factory() {
+    public static factory<TerrainTypeID>() {
         return (width: number, height: number) =>
-            (field_generator: FieldGenerator) => {
+            (field_generator: FieldGenerator<TerrainTypeID>) => {
                 return new WorldMap(width, height, field_generator);
             };
     }

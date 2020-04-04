@@ -25,6 +25,10 @@ import Spray from "./logic/map/objects/Spray";
 import HungerOnScreen from "./visualization/HungerOnScreen";
 import HungerComponent from "./logic/map/objects/components/HungerComponent";
 import LifeOnScreen from "./visualization/LifeOnScreen";
+import { data } from "./logic/data/Map1";
+import DayTimeOnScreen from "./visualization/DayTimeOnScreen";
+import InfectedWalkingComponent from "./logic/map/objects/components/InfectedWalkingComponent";
+import InfectedSpreadComponent from "./logic/map/objects/components/InfectedSpreadComponent";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -37,6 +41,9 @@ export default class Game {
 
     private object: MovingMapObject;
     private objects: Array<MapObject>;
+    private to_add_objects: Array<MapObject> = [];
+
+    public time_of_day: number = 18;
 
     private visualizers: {
         fps_counter: (print: number) => void,
@@ -44,9 +51,13 @@ export default class Game {
         inventar: InventarOnScreen,
         hunger: HungerOnScreen,
         life: LifeOnScreen,
+        daytime: DayTimeOnScreen,
     };
 
     constructor(element: HTMLElement) {
+        InfectedWalkingComponent.game = this;
+        InfectedSpreadComponent.game = this;
+
         let canvas = document.createElement('canvas');
         canvas.width = 800;
         canvas.height = 600;
@@ -75,6 +86,7 @@ export default class Game {
             inventar: new InventarOnScreen(this.context, this.images, new Point(150, 600), new Point(2, 8)),
             hunger: new HungerOnScreen(this.context, this.images, Rect.from_boundries(0, 500, 550, 600)),
             life: new LifeOnScreen(this.context, this.images, Rect.from_boundries(0, 550, 600, 600)),
+            daytime: new DayTimeOnScreen(this.context, this.images, Rect.from_boundries(650, 500, 800, 600)),
         };
 
         {
@@ -86,36 +98,28 @@ export default class Game {
         this.camera_position = this.object.get_position();
     }
 
+
     private construct_world_map(): WorldMap<TerrainTypeID> {
-        let field_generator: FieldGenerator = (x: number, y: number) => {
+        const map_data = data;
+        let field_generator: FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => {
+            const field_data = data.at(x, y);
             const possible_terrain = [
                 TerrainTypeID.INDOOR_SHOP,
                 TerrainTypeID.OUTDOOR_GRAS,
             ];
             const terrain: Terrain = {
-                type: possible_terrain[randomBytes(1).readUInt8(0) % possible_terrain.length],
+                type: field_data.terrain,
                 variation_key: 'default',
             };
-            return { x, y, object: null, terrain };
+            let object = null;
+            if (field_data.object) {
+                object = new field_data.object(map, new Point(x, y));
+                this.objects.push(object);
+            }
+            const field: Field = { x, y, object, terrain };
+            return field;
         };
         let map = WorldMap.factory()(32, 32)(field_generator);
-        let object_count = randomBytes(1).readUInt8(0);
-
-        for (let i = 0; i < object_count; ++i) {
-            const possible_objects = [
-                Spray,
-                Nudel,
-                Paperroll,
-                Virus,
-            ];
-            const constructor = possible_objects[randomBytes(1).readUInt8(0) % possible_objects.length];
-            let x = randomBytes(1).readUInt8(0) % map.width;
-            let y = randomBytes(1).readUInt8(0) % map.height;
-            let object = new constructor(map, new Point(x, y));
-            this.objects.push(object);
-            map.add_object(object);
-        }
-
         return map;
     }
 
@@ -134,6 +138,11 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
+        this.to_add_objects.map((object: MapObject) => {
+            this.objects.push(object);
+            this.world_map.add_object(object);
+        });
+        this.to_add_objects = [];
         this.objects = this.objects.filter((object: MapObject) => {
             object.update(delta_seconds);
             return !object.is_destroyed();
@@ -141,6 +150,8 @@ export default class Game {
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
             return field;
         });
+        this.time_of_day += delta_seconds / 2;
+        if (this.time_of_day >= 24) this.time_of_day -= 24;
 
     }
 
@@ -152,9 +163,22 @@ export default class Game {
             this.input_delegator.game_over = true;
             return;
         }
-        this.visualizers.world_map.set_camera(this.camera_position).display(delta_seconds);
+        const object_offset = this.object.moving_offset;
+        this.visualizers.world_map.set_camera(this.camera_position.add(object_offset)).display(delta_seconds);
+        const time_of_day_p = (this.time_of_day / 24);
+        if (time_of_day_p < 0.25 || time_of_day_p > 0.75) {
+            const time_of_night_p = ((time_of_day_p + 1 - 0.75) % 1) * 2;
+            const strength = (time_of_day_p - 0.25) * (time_of_day_p - 0.75) * 4;
+            this.context.fillStyle = "hsla(" + ((time_of_night_p * 0.25 + 0.5) * 365) % 356 + ", 90%, 10%, " + strength + ")";
+            this.context.fillRect(0, 0, 20 * 32, 15 * 32);
+        }
+
         this.visualizers.inventar.display(this.object);
         this.visualizers.hunger.display(this.object);
+
+        this.context.fillStyle = "gray";
+        //this.context.fillRect(650, 500, 150, 100);
+        this.visualizers.daytime.display(this.time_of_day / 24);
         this.visualizers.life.display(this.object);
         this.visualizers.fps_counter(this.fps_counter.get_current_fps());
     }
@@ -178,13 +202,15 @@ export default class Game {
         }
     }
 
-    on_input_direction = (direction: Direction) => {
+    on_input_direction = (direction: Direction): boolean => {
         let target_pos = this.object.get_position().add(direction_to_point(direction, 1));
         let target_field = this.world_map.at(target_pos);
         if (target_field) {
+            if (this.object.moving_progress !== false) return false;
             this.object.move_to(this.world_map, target_pos);
             this.camera_position = this.object.get_position();
         }
+        return true;
     }
 
     on_input_use_paper = () => {
@@ -230,4 +256,10 @@ export default class Game {
         hunger.urge_to_eat = Math.max(0, hunger.urge_to_eat - 40);
 
     }
+
+    public create_object(object_constructor: CreateableObjectTypes, pos: Point) {
+        this.to_add_objects.push(new object_constructor(this.world_map, pos));
+    }
 }
+
+type CreateableObjectTypes = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus;

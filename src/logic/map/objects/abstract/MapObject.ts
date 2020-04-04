@@ -54,7 +54,7 @@ export default abstract class MapObject {
         if (!is_allowed) return false;
         this.on_position_change.trigger_event(event);
         map.update_field_at_point(this.position, { object: null });
-        map.update_field_at_point(target, { object: this });
+        if (!this._is_destroyed) map.update_field_at_point(target, { object: this });
         this.position = target;
         return true;
     }
@@ -90,6 +90,10 @@ export default abstract class MapObject {
         });
         return this;
     };
+
+    public regen(amount: number): this {
+        return this;
+    }
 
     public is_destroyed(): boolean {
         return this._is_destroyed;

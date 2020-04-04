@@ -14,8 +14,11 @@ export enum ImageID {
 
     OBJECT__PAPER_ROLL,
     OBJECT__SPRAY,
-    OBJECT__WALL,
+    OBJECT__WALL2,
     OBJECT__NUDEL,
+
+    OBJECT__MOON,
+    OBJECT__SUN,
 
     EFFECT__INFECT,
     EFFECT__SPRAY,

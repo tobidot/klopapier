@@ -21,6 +21,8 @@ export default class HungerComponent extends MapObjectComponent {
                 source: this.object,
                 type: DamageType.TRUE,
             });
+        } else {
+            this.object.regen(seconds * 0.1);
         }
     }
 }

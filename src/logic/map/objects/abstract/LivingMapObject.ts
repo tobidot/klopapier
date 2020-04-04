@@ -20,6 +20,11 @@ export default class LivingMapObject extends MovingMapObject {
         return this;
     }
 
+    public regen(amount: number): this {
+        this.hitpoints = Math.min(this.max_hitpoints, this.hitpoints + amount);
+        return this;
+    }
+
     public get_health_percentage(): number {
         return this.hitpoints / this.max_hitpoints;
     }

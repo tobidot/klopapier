@@ -19,10 +19,13 @@ export default class LifeOnScreen {
     display(object: MapObject) {
         if (!(object instanceof LivingMapObject)) return;
         const bar_width = this.display_rect.width() - 50;
+        const percentage = (object.get_health_percentage());
 
         this.context.fillStyle = "red";
+        this.context.fillStyle = "32px sans-serif";
 
-        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width * (1 - object.get_health_percentage()), this.display_rect.height() * 0.25);
+        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width * percentage, this.display_rect.height() * 0.25);
+        this.context.fillText('Health', bar_width * percentage, this.display_rect.top + 20);
 
     }
 }

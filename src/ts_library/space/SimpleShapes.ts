@@ -104,6 +104,10 @@ export class Rect implements IRect {
         return new Point((this.left + this.right) / 2, (this.top + this.bottom) / 2);
     }
 
+    public get_random_point() {
+        return new Point(this.left + Math.random() * this.width(), this.top + Math.random() * this.height());
+    }
+
     public move_by(x: number, y: number): Rect {
         this.left += x;
         this.right += x;

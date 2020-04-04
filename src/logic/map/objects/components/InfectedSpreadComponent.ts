@@ -5,36 +5,37 @@ import { TerrainTypeID } from "../../../../assets/TerrainResources";
 import { Direction } from "../../../../ts_library/space/Direction";
 import { Point } from "../../../../ts_library/space/SimpleShapes";
 import { direction_to_point } from "../../../../ts_library/conversion/fromDirection";
+import { Agent } from "http";
 import { DamageType } from "../../../fight/DamageType";
 import { get_random_of_array } from "../../../../ts_library/utility/RandomObjects";
 import Game from "../../../../Game";
-import Agent from "../Agent";
+import Virus from "../Virus";
 
-export default class InfectedWalkingComponent extends MapObjectComponent {
+export default class InfectedSpreadComponent extends MapObjectComponent {
     public static game: Game;
-    public static NAME = "infected_walking";
+    public static NAME = "infected_spread";
     private map: WorldMap<TerrainTypeID>;
     private object: MapObject;
 
     public steps_interval_in_seconds = 1
-    public time_to_next_step = 0;
-    public chance_to_move = 0.5;
+    public time_to_next_try = 0;
+    public chance_to_duplicate = 0.15;
 
     public constructor(map: WorldMap<TerrainTypeID>, object: MapObject) {
-        super(InfectedWalkingComponent.NAME);
+        super(InfectedSpreadComponent.NAME);
         this.map = map;
         this.object = object;
     }
 
     public update(delta_seconds: number) {
-        this.time_to_next_step -= delta_seconds;
-        if (this.time_to_next_step <= 0) {
-            this.time_to_next_step += this.steps_interval_in_seconds;
+        this.time_to_next_try -= delta_seconds;
+        if (this.time_to_next_try <= 0) {
+            this.time_to_next_try += this.steps_interval_in_seconds;
 
-            const daytime_p = (InfectedWalkingComponent.game.time_of_day / 24 - 0.25);
+            const daytime_p = (InfectedSpreadComponent.game.time_of_day / 24 - 0.25);
             const night_strength = (-Math.sin(daytime_p * Math.PI * 2) * 0.5 + 0.5);
-            const current_chance_to_move = night_strength * night_strength * this.chance_to_move;
-            if (Math.random() < current_chance_to_move) {
+            const current_chance_to_duplicate = night_strength * night_strength * this.chance_to_duplicate;
+            if (Math.random() < current_chance_to_duplicate) {
                 const directions = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN].reduce(
                     (list: Direction[], direction: Direction): Direction[] => {
                         const target = this.object.get_position().add(direction_to_point(direction, 1));
@@ -55,17 +56,9 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                 if (direction !== null) {
                     const target = this.object.get_position().add(direction_to_point(direction, 1));
                     const field = this.map.at(target);
-                    if (field && field.object instanceof Agent) {
-                        field.object.damage({
-                            amount: 1,
-                            source: this.object,
-                            type: DamageType.INFECT
-                        })
-                        //this.object.attack(field, DamageType.INFECT);
-                        this.object.destroy();
-                        return [];
+                    if (field) {
+                        InfectedSpreadComponent.game.create_object(Virus, target);
                     }
-                    this.object.move_to(this.map, target);
                 }
             }
         }

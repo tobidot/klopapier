@@ -11,6 +11,7 @@ import MovingMapObject from "../logic/map/objects/abstract/MovingMapObject";
 import LivingMapObject from "../logic/map/objects/abstract/LivingMapObject";
 import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectDamagedEvent } from "../logic/map/Events";
 import { DamageType } from "../logic/fight/DamageType";
+import { direction_to_point } from "../ts_library/conversion/fromDirection";
 
 function assert_class_type<BASE, DERIVE extends BASE>(object: BASE, class_arg: { new(...x: any): DERIVE, name: string }): object is DERIVE {
     if (object instanceof class_arg === false) {
@@ -49,7 +50,7 @@ function get_image_for_object_type(object: MapObject | null): ImageID | null {
         case MapObjectTypeID.SPRAY:
             return ImageID.OBJECT__SPRAY;
         case MapObjectTypeID.WALL:
-            return ImageID.OBJECT__WALL;
+            return ImageID.OBJECT__WALL2;
         case MapObjectTypeID.VIRUS:
             return ImageID.UNIT__VIRUS;
         case MapObjectTypeID.PLAYER:
@@ -111,11 +112,15 @@ export default class WorldMapOnScreen {
 
     public display(delta_seconds: number) {
         this.field_drawer.effects = this.effects;
-        let draw_field = this.field_drawer.get_draw_function();
+        let draw_terrain_field = this.field_drawer.get_draw_terrain_function();
+        let draw_object_field = this.field_drawer.get_draw_object_function();
+        let draw_effect_field = this.field_drawer.get_draw_effect_function();
         const view_rect = Rect.from_boundries(0, 0, this.screen_size.x, this.screen_size.y)
             .move_by(-Math.round(this.screen_size.x / 2), - Math.round(this.screen_size.y / 2))
-            .move_by(this.camera.x, this.camera.y);
-        this.world_map.map_fields_in_rect(view_rect, draw_field);
+            .move_by(Math.floor(this.camera.x), Math.floor(this.camera.y));
+        this.world_map.map_fields_in_rect(view_rect, draw_terrain_field);
+        this.world_map.map_fields_in_rect(view_rect, draw_object_field);
+        this.world_map.map_fields_in_rect(view_rect, draw_effect_field);
         this.effects = this.effects.filter((effect) => {
             effect.update(delta_seconds);
             return effect.is_allive();
@@ -163,7 +168,7 @@ class FieldDrawer {
         this.camera = new Point(0, 0);
     }
 
-    private draw_terrain(image_x: number, image_y: number, field: Field) {
+    private draw_terrain = (image_x: number, image_y: number, field: Field) => {
         let terrain_image_id = get_image_for_terrain_type(field.terrain);
         if (terrain_image_id !== null) {
             let terrain_image = this.image_manager.get(terrain_image_id);
@@ -171,15 +176,20 @@ class FieldDrawer {
         }
     }
 
-    private draw_object(image_x: number, image_y: number, field: Field) {
+    private draw_object = (image_x: number, image_y: number, field: Field) => {
         let object_image_id = get_image_for_object_type(field.object);
         if (object_image_id !== null) {
             let object_image = this.image_manager.get(object_image_id);
+            if (field.object instanceof MovingMapObject && field.object.moving_progress !== false) {
+                const offset: Point = direction_to_point(field.object.comming_from_direction, field.object.moving_progress);
+                image_x += offset.x * this.cell_size;
+                image_y += offset.y * this.cell_size;
+            }
             this.context.drawImage(object_image, image_x, image_y, this.cell_size, this.cell_size);
         }
     };
 
-    private draw_effects(image_x: number, image_y: number, field_pos: Point) {
+    private draw_effects = (image_x: number, image_y: number, field_pos: Point) => {
         this.effects.forEach((effect) => {
             const image_id = effect.get_image_to_display(field_pos);
             if (image_id !== null) {
@@ -189,18 +199,27 @@ class FieldDrawer {
         });
     };
 
-    public get_draw_function() {
+    private get_draw_function(callback: (x: number, y: number, field: Field) => void) {
         const half_screen_width = Math.round(this.screen_size.x / 2);
         const half_screen_height = Math.round(this.screen_size.y / 2);
         return (field: Field): Field => {
             let image_x = (field.x - this.camera.x + half_screen_width) * this.cell_size;
             let image_y = (field.y - this.camera.y + half_screen_height) * this.cell_size;
-
-            this.draw_terrain(image_x, image_y, field);
-            this.draw_object(image_x, image_y, field);
-            this.draw_effects(image_x, image_y, new Point(field.x, field.y));
+            callback(image_x, image_y, field);
             return field;
         };
+    }
+
+    public get_draw_terrain_function() {
+        return this.get_draw_function(this.draw_terrain);
+    }
+
+    public get_draw_object_function() {
+        return this.get_draw_function(this.draw_object);
+    }
+
+    public get_draw_effect_function() {
+        return this.get_draw_function(this.draw_object);
     }
 }
 

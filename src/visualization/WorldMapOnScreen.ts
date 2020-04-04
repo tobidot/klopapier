@@ -46,7 +46,7 @@ function get_image_for_object_type(object: MapObject | null): ImageID | null {
         case MapObjectTypeID.PAPER_ROLL:
             return ImageID.OBJECT__PAPER_ROLL;
         case MapObjectTypeID.NUDEL:
-            return ImageID.OBJECT__NUDEL;
+            return ImageID.OBJECT__NUDEL4;
         case MapObjectTypeID.SPRAY:
             return ImageID.OBJECT__SPRAY;
         case MapObjectTypeID.WALL:

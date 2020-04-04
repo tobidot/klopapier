@@ -55,7 +55,7 @@ export default class InventarOnScreen {
             case 'paperroll_half': return this.images.get(ImageID.OBJECT__PAPER_ROLL_HALF);
             case 'paperroll_last': return this.images.get(ImageID.OBJECT__PAPER_ROLL_LAST);
             case 'spray': return this.images.get(ImageID.OBJECT__SPRAY);
-            case 'nudel': return this.images.get(ImageID.OBJECT__NUDEL);
+            case 'nudel': return this.images.get(ImageID.OBJECT__NUDEL4);
             default: return this.images.get(ImageID.OTHER__ERROR);
         }
     }

@@ -15,7 +15,7 @@ export default class DayTimeOnScreen {
         this.display_rect = display_rect;
     }
 
-    display(time_of_day_percent: number) {
+    display(time_of_day_percent: number, day: number) {
         const image_moon = this.images.get(ImageID.OBJECT__MOON);
         const image_sun = this.images.get(ImageID.OBJECT__SUN);
         const center = this.display_rect.center();
@@ -36,6 +36,8 @@ export default class DayTimeOnScreen {
         this.context.globalAlpha = moon_strength;
         this.context.drawImage(image_moon, mx, my, 32, 32);
         this.context.globalAlpha = 1;
-
+        this.context.font = "24px fantasy";
+        this.context.fillStyle = "white";
+        this.context.fillText('Day ' + day, center.x - this.display_rect.width() / 5, center.y + 8);
     }
 }

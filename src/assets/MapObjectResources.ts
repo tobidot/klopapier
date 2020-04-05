@@ -5,4 +5,5 @@ export enum MapObjectTypeID {
     NUDEL,
     VIRUS,
     WALL,
+    FURNITURE1,
 };

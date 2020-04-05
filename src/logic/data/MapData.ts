@@ -21,8 +21,8 @@ interface MapDataSnippet {
 }
 
 export default class MapData {
-    private width: number;
-    private height: number;
+    public readonly width: number;
+    public readonly height: number;
     private snippets: MapDataSnippet[] = [];
 
     public data: {
@@ -41,8 +41,8 @@ export default class MapData {
             });
         });
     }
-    public set(x: number, y: number, data: MapFieldData) {
-        this.data[Math.abs(x) % this.width][Math.abs(y) % this.height] = data;
+    public set(x: number, y: number, data: Partial<MapFieldData>) {
+        Object.assign(this.data[Math.abs(x) % this.width][Math.abs(y) % this.height], data);
     }
 
     public at(x: number, y: number): MapFieldData {

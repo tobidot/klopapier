@@ -51,6 +51,8 @@ function get_image_for_object_type(object: MapObject | null): ImageID | null {
             return ImageID.OBJECT__SPRAY;
         case MapObjectTypeID.WALL:
             return ImageID.OBJECT__WALL2;
+        case MapObjectTypeID.FURNITURE1:
+            return ImageID.OBJECT__FURNITURE1;
         case MapObjectTypeID.VIRUS:
             return ImageID.UNIT__VIRUS;
         case MapObjectTypeID.PLAYER:

@@ -14,7 +14,7 @@ export default class HungerComponent extends MapObjectComponent {
     }
 
     public update(seconds: number) {
-        this.urge_to_eat = Math.min(this.urge_to_eat + seconds * 4, 100);
+        this.urge_to_eat = Math.min(this.urge_to_eat + seconds * 2, 100);
         if (this.urge_to_eat >= 100) {
             this.object.damage({
                 amount: seconds,

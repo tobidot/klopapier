@@ -29,6 +29,7 @@ import { data } from "./logic/data/Map1";
 import DayTimeOnScreen from "./visualization/DayTimeOnScreen";
 import InfectedWalkingComponent from "./logic/map/objects/components/InfectedWalkingComponent";
 import InfectedSpreadComponent from "./logic/map/objects/components/InfectedSpreadComponent";
+import MapData from "./logic/data/MapData";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -43,7 +44,9 @@ export default class Game {
     private objects: Array<MapObject>;
     private to_add_objects: Array<MapObject> = [];
 
-    public time_of_day: number = 18;
+    public time_of_day: number = 0;
+    public day: number = 0;
+    public paper_kiled = false;
 
     private visualizers: {
         fps_counter: (print: number) => void,
@@ -100,7 +103,7 @@ export default class Game {
 
 
     private construct_world_map(): WorldMap<TerrainTypeID> {
-        const map_data = data;
+        const map_data: MapData = data;
         let field_generator: FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => {
             const field_data = data.at(x, y);
             const possible_terrain = [
@@ -119,7 +122,7 @@ export default class Game {
             const field: Field = { x, y, object, terrain };
             return field;
         };
-        let map = WorldMap.factory()(32, 32)(field_generator);
+        let map = WorldMap.factory()(map_data.width * 2, map_data.height * 2)(field_generator);
         return map;
     }
 
@@ -138,6 +141,7 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
+        if (this.object.is_destroyed()) return;
         this.to_add_objects = this.to_add_objects.filter((object: MapObject) => {
             const field = this.world_map.at(object.get_position());
             if (field) {
@@ -155,15 +159,37 @@ export default class Game {
             return field;
         });
         this.time_of_day += delta_seconds / 2;
-        if (this.time_of_day >= 24) this.time_of_day -= 24;
+        if (this.time_of_day >= 24) {
+            this.day++;
+            this.time_of_day -= 24;
+            this.paper_kiled = false;
+        }
+        if (this.time_of_day >= 12 && !this.paper_kiled) {
+            this.paper_kiled = true;
+            this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
+                if (field.terrain.variation_key === "with_paper") {
+                    return Object.assign({}, field, {
+                        terrain: {
+                            type: field.terrain.type,
+                            variation_key: "default",
+                        }
+                    });
+                }
+                return field;
+            });
+        }
 
     }
 
     draw(delta_seconds: number) {
         this.context.clearRect(0, 0, 800, 600);
         if (this.object.is_destroyed()) {
+            this.context.font = '64px gothic';
             this.context.fillStyle = 'red';
-            this.context.fillText('Game Over', 50, 50, 200);
+            this.context.fillText('You died', 50, 50, 200);
+            this.context.font = '48px fantasy';
+            this.context.fillStyle = 'gold';
+            this.context.fillText('Day ' + this.day, 150, 150, 200);
             this.input_delegator.game_over = true;
             return;
         }
@@ -182,7 +208,7 @@ export default class Game {
 
         this.context.fillStyle = "gray";
         //this.context.fillRect(650, 500, 150, 100);
-        this.visualizers.daytime.display(this.time_of_day / 24);
+        this.visualizers.daytime.display(this.time_of_day / 24, this.day);
         this.visualizers.life.display(this.object);
         this.visualizers.fps_counter(this.fps_counter.get_current_fps());
     }

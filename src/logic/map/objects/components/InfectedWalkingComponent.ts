@@ -9,6 +9,8 @@ import { DamageType } from "../../../fight/DamageType";
 import { get_random_of_array } from "../../../../ts_library/utility/RandomObjects";
 import Game from "../../../../Game";
 import Agent from "../Agent";
+import Wall from "../Wall";
+import Virus from "../Virus";
 
 export default class InfectedWalkingComponent extends MapObjectComponent {
     public static game: Game;
@@ -41,29 +43,29 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                         const field = this.map.at(target);
                         if (!field) return list;
                         if (field.terrain.variation_key === 'with_paper') return list;
-                        if (!field.object) {
-                            list.push(direction);
-                            return list;
+                        if (field.object) {
+                            if (field.object instanceof Wall) return list;
                         }
-                        if (field.object instanceof Agent) {
-                            list.push(direction);
-                            return list;
-                        };
+                        list.push(direction);
                         return list;
                     }, []);
                 const direction = get_random_of_array<Direction>(directions);
                 if (direction !== null) {
                     const target = this.object.get_position().add(direction_to_point(direction, 1));
                     const field = this.map.at(target);
-                    if (field && field.object instanceof Agent) {
-                        field.object.damage({
-                            amount: 1,
-                            source: this.object,
-                            type: DamageType.INFECT
-                        })
-                        //this.object.attack(field, DamageType.INFECT);
-                        this.object.destroy();
-                        return [];
+                    if (field && field.object) {
+                        if (field.object instanceof Agent) {
+                            field.object.damage({
+                                amount: 1,
+                                source: this.object,
+                                type: DamageType.INFECT
+                            })
+                            //this.object.attack(field, DamageType.INFECT);
+                            //this.object.destroy();
+                            return [];
+                        } else if (field.object instanceof Virus === false) {
+                            field.object.destroy();
+                        }
                     }
                     this.object.move_to(this.map, target);
                 }

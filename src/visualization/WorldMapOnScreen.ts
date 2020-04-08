@@ -35,6 +35,10 @@ function get_image_for_terrain_type(terrain: Terrain): ImageID | null {
                 case 'with_spray': return ImageID.TERRAIN__OUTDOOR_GRAS_WITH_SPRAY;
                 default: return ImageID.TERRAIN__OUTDOOR_GRAS;
             }
+        case TerrainTypeID.INDOOR_PALLETTE: return ImageID.TERRAIN__INDOOR_EMPTY_PALLETTE;
+        case TerrainTypeID.INDOOR_TOILET: return ImageID.TERRAIN__INDOOR_TOILET;
+        case TerrainTypeID.INDOOR_CLINICAL_PALLETTE: return ImageID.TERRAIN__INDOOR_EMPTY_CLINICAL_PALLETTE;
+        case TerrainTypeID.INDOOR_TABLE: return ImageID.TERRAIN__INDOOR_TABLE;
         default:
             return null;
     }

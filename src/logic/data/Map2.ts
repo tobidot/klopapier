@@ -20,8 +20,8 @@ const s = Spray;
 const n = Nudel;
 const w = Wall;
 
-export var data: MapData = new MapData(8, 8, 1, 1);
-data.start_day_time = 10;
+export var data: MapData = new MapData(12, 12, 1, 1);
+data.start_day_time = 16;
 
 
 const dixi = data.add_snippet([
@@ -99,11 +99,21 @@ const fence = data.add_snippet([
 
 data.put(house, 0, 0, Direction.DOWN);
 data.put(fence, 6, 0, Direction.DOWN);
-data.put(dixi, 5, 5, Direction.LEFT);
+data.put(dixi, 4, 5, Direction.LEFT);
+data.put(dixi, 5, 7, Direction.LEFT);
+data.put(dixi, 6, 9, Direction.LEFT);
 
-data.set(7, 0, {
+data.set(11, 9, {
     object: Virus,
 });
-
+data.set(9, 11, {
+    object: Virus,
+});
+data.set(9, 9, {
+    object: Virus,
+});
+data.set(11, 11, {
+    object: Virus,
+});
 
 

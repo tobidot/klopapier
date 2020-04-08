@@ -7,12 +7,14 @@ export class InputDelegator {
     public on_use_paper?: () => void;
     public on_use_spray?: () => void;
     public on_eat?: () => void;
+    public on_interact?: () => void;
     public game_over: boolean = false;
     public buffer_action: string = "";
 
     constructor(element: HTMLElement) {
         this.element = element;
         this.element.onkeydown = ((event: KeyboardEvent) => {
+            if (this.on_interact) this.on_interact();
             //if (event.repeat) return;
             if (this.game_over) return;
             if (this.try_action(event.code) === false) {
@@ -21,6 +23,9 @@ export class InputDelegator {
                 this.buffer_action = "";
             }
         });
+        this.element.onclick = () => {
+            if (this.on_interact) this.on_interact();
+        };
         setInterval(() => {
             if (this.buffer_action !== '') {
                 if (this.try_action(this.buffer_action)) this.buffer_action = "";

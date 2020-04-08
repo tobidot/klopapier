@@ -4,7 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "tsc": "tsc",
-    "start": "npx parcel ./src/index.html -d ./dist"
+    "start": "npx parcel ./src/index.html -d ./dist",
+    "build": "npx parcel build ./src/index.html -d ./dist-build --public-url ./"
   },
   "author": "tobidot <Object.name@live.de>",
   "license": "MIT",

@@ -6,6 +6,7 @@ import Virus from "../map/objects/Virus";
 import { type } from "os";
 import { timingSafeEqual } from "crypto";
 import Wall from "../map/objects/Wall";
+import { Direction } from "../../ts_library/space/Direction";
 
 
 type AllowedObjectType = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;
@@ -23,6 +24,9 @@ interface MapDataSnippet {
 export default class MapData {
     public readonly width: number;
     public readonly height: number;
+    public readonly player_x: number;
+    public readonly player_y: number;
+    public start_day_time: number = 6;
     private snippets: MapDataSnippet[] = [];
 
     public data: {
@@ -30,7 +34,9 @@ export default class MapData {
             [row: number]: MapFieldData
         },
     }
-    public constructor(width: number, height: number) {
+    public constructor(width: number, height: number, x: number, y: number) {
+        this.player_x = x;
+        this.player_y = y;
         this.width = width;
         this.height = height;
         this.data = [...new Array(width)].map(() => {
@@ -74,12 +80,22 @@ export default class MapData {
         });
         return this.snippets.length - 1;
     }
-    public put(snippet_id: number, x: number, y: number) {
+    public put(snippet_id: number, x: number, y: number, rotate: Direction = Direction.RIGHT) {
         const snippet = this.snippets[snippet_id];
         for (let xi = 0; xi < snippet.width; xi++) {
             for (let yi = 0; yi < snippet.height; yi++) {
-                this.set(x + xi, y + yi, snippet.data[xi + yi * snippet.width]);
+                const [rx, ry] = this.rotate(xi, yi, snippet.width, snippet.height, rotate);
+                this.set(x + rx, y + ry, snippet.data[xi + yi * snippet.width]);
             }
         }
     }
+    private rotate(x: number, y: number, w: number, h: number, rotate: Direction): [number, number] {
+        switch (rotate) {
+            case Direction.LEFT: return [w - x - 1, y];
+            case Direction.UP: return [y, w - x - 1];
+            case Direction.RIGHT: return [x, y];
+            case Direction.DOWN: return [h - y - 1, x];
+        }
+    }
+
 };

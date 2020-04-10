@@ -50,6 +50,7 @@ export default class Game {
     private to_add_objects: Array<MapObject> = [];
     private infection_count: number = 0;
 
+    public bad_luck_protection = 0;
     public time_to_refresh_items: number = 0;
     public time_of_day: number = 0;
     public day: number = 0;
@@ -240,7 +241,10 @@ export default class Game {
         const chance_to_spawn_items = Math.min(0.1, 8 / (this.day * (this.day + 2) + 70));
         if (should_refreshing_items) this.time_to_refresh_items += 4;
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
-            if (should_refreshing_items && Math.random() < chance_to_spawn_items && !field.object) {
+            if (!should_refreshing_items) return field;
+            if (field.object) return field;
+            if (Math.random() < chance_to_spawn_items || this.bad_luck_protection > 1) {
+                this.bad_luck_protection = 0;
                 switch (field.terrain.type) {
                     case TerrainTypeID.INDOOR_TOILET:
                         this.create_object(Paperroll, new Point(field.x, field.y));
@@ -252,6 +256,8 @@ export default class Game {
                         this.create_object(Spray, new Point(field.x, field.y));
                         break;
                 }
+            } else {
+                this.bad_luck_protection += chance_to_spawn_items;
             }
             return field;
         });

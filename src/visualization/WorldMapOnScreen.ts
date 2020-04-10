@@ -114,6 +114,10 @@ export default class WorldMapOnScreen {
                     break;
             }
         });
+        this.world_map.events.on_effect.add((event: Field) => {
+            this.effects.push(new Effect(new Point(event.x, event.y), ImageID.EFFECT__FIRE, 2));
+        });
+
     }
 
     public display(delta_seconds: number) {
@@ -195,9 +199,9 @@ class FieldDrawer {
         }
     };
 
-    private draw_effects = (image_x: number, image_y: number, field_pos: Point) => {
+    private draw_effects = (image_x: number, image_y: number, field: Field) => {
         this.effects.forEach((effect) => {
-            const image_id = effect.get_image_to_display(field_pos);
+            const image_id = effect.get_image_to_display(new Point(field.x, field.y));
             if (image_id !== null) {
                 let image = this.image_manager.get(image_id);
                 this.context.drawImage(image, image_x, image_y, this.cell_size, this.cell_size);
@@ -225,7 +229,7 @@ class FieldDrawer {
     }
 
     public get_draw_effect_function() {
-        return this.get_draw_function(this.draw_object);
+        return this.get_draw_function(this.draw_effects);
     }
 }
 

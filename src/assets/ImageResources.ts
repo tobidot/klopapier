@@ -29,6 +29,7 @@ export enum ImageID {
     OBJECT__SUN,
 
     EFFECT__INFECT,
+    EFFECT__FIRE,
     EFFECT__SPRAY,
 
     UNIT__SMILEY_LEFT,
@@ -42,6 +43,8 @@ export enum ImageID {
     MAPS__MAP2,
     MAPS__MAP3,
     MAPS__MAP4,
+
+    TUTORIAL__LEVEL1,
     OTHER__ERROR,
 };
 

@@ -53,7 +53,9 @@ export default class Game {
     public time_to_refresh_items: number = 0;
     public time_of_day: number = 0;
     public day: number = 0;
-    public paper_kiled = false;
+
+    public paper_kiled: number = 0;
+    public fires: Array<Point> = [];
 
     public has_won: boolean = false;
     public has_lost: boolean = false;
@@ -63,6 +65,12 @@ export default class Game {
         map2,
         map3
     ];
+    private intersections: Array<Array<ImageID>> = [
+        [
+            ImageID.TUTORIAL__LEVEL1,
+        ],
+    ];
+    private current_intersect: number | null = 0;
 
     private visualizers: {
         fps_counter: (print: number) => void,
@@ -196,7 +204,7 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
-        if (this.has_lost || this.has_won) return;
+        if (this.has_lost || this.has_won || this.current_intersect !== null) return;
         this.to_add_objects = this.to_add_objects.filter((object: MapObject) => {
             const field = this.world_map.at(object.get_position());
             if (field) {
@@ -214,7 +222,7 @@ export default class Game {
 
         this.time_to_refresh_items -= delta_seconds;
         const should_refreshing_items = this.time_to_refresh_items < 0;
-        const chance_to_spawn_items = Math.min(0.2, 10 / (this.infection_count + 10));
+        const chance_to_spawn_items = Math.min(0.2, 10 / (this.day * this.day + 5));
         if (should_refreshing_items) this.time_to_refresh_items += 4;
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
             if (should_refreshing_items && Math.random() < chance_to_spawn_items && !field.object) {
@@ -237,22 +245,51 @@ export default class Game {
         if (this.time_of_day >= 24) {
             this.day++;
             this.time_of_day -= 24;
-            this.paper_kiled = false;
         }
-        if (this.time_of_day >= 12 && !this.paper_kiled) {
-            this.paper_kiled = true;
-            this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
-                if (field.terrain.variation_key === "with_paper") {
-                    return Object.assign({}, field, {
-                        terrain: {
-                            type: field.terrain.type,
-                            variation_key: "default",
+        if (this.time_of_day >= this.paper_kiled + 1) {
+            this.paper_kiled = Math.floor(this.time_of_day);
+            const config_chance_for_paper_to_enflame = 0.01;
+            this.fires = this.fires.reduce((new_list: Point[], pos: Point): Point[] => {
+                const field = this.world_map.at(pos);
+                [Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP].map((direction: Direction) => {
+                    const target = pos.add(direction_to_point(direction, 1));
+                    const target_field = this.world_map.at(target);
+                    if (target_field && target_field.terrain.type === TerrainTypeID.OUTDOOR_GRAS && target_field.terrain.variation_key === "with_paper") {
+                        this.world_map.effect(target);
+                        this.world_map.update_field_at_point(target, {
+                            terrain: {
+                                type: target_field.terrain.type,
+                                variation_key: "default",
+                            }
+                        });
+                        new_list.push(target);
+                    }
+                });
+                return new_list;
+            }, new Array<Point>());
+
+            if (this.time_of_day >= 8 && this.time_of_day < 16) {
+                this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
+                    if (field.terrain.type === TerrainTypeID.OUTDOOR_GRAS && field.terrain.variation_key === "with_paper") {
+                        if (Math.random() < config_chance_for_paper_to_enflame) {
+                            const target_pos = new Point(field.x, field.y);
+                            this.world_map.effect(target_pos);
+                            this.fires.push(target_pos);
+                            return Object.assign({}, field, {
+                                terrain: {
+                                    type: field.terrain.type,
+                                    variation_key: "default",
+                                }
+                            });
                         }
-                    });
-                }
-                return field;
-            });
+                    }
+                    return field;
+                });
+            }
+            this.fires = [...new Set(this.fires)];
         }
+
+
         if (!this.has_won && this.objects.filter((object) => object instanceof Virus).length === 0) {
             this.has_won = true;
             this.current_level = (this.current_level + 1) % this.levels.length;
@@ -349,7 +386,7 @@ export default class Game {
         const has = inventar.has('paperroll') || inventar.has('paperroll_half') || inventar.has('paperroll_last');
         if (!has) return;
         const old_field = this.world_map.at(field_pos);
-        if (old_field && old_field.terrain.variation_key === 'default' &&
+        if (old_field && (old_field.terrain.variation_key === 'default') &&
             (old_field.terrain.type === TerrainTypeID.OUTDOOR_GRAS || old_field.terrain.type === TerrainTypeID.INDOOR_SHOP)) {
             if (inventar.has('paperroll_last')) {
                 inventar.remove('paperroll_last');
@@ -375,7 +412,7 @@ export default class Game {
         if (!inventar || inventar.has('spray') === false) return;
 
         const old_field = this.world_map.at(field_pos);
-        if (inventar.items.length > 0 && old_field && old_field.terrain.variation_key === 'default' &&
+        if (inventar.items.length > 0 && old_field && (old_field.terrain.variation_key === 'default' || old_field.terrain.variation_key === 'with_paper') &&
             (old_field.terrain.type === TerrainTypeID.OUTDOOR_GRAS || old_field.terrain.type === TerrainTypeID.INDOOR_SHOP)) {
             inventar.remove('spray');
             this.world_map.update_field_at_point(field_pos, {

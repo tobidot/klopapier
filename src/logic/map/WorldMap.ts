@@ -17,11 +17,12 @@ export default class WorldMap<TerrainTypeID> {
     public readonly events: WorldEventDelegator;
     private fields: Array<Field> = [];
     private field_generator: FieldGenerator<TerrainTypeID>;
+    public readonly on_effect: ListenerSocket<Field> = new ListenerSocket();
 
     private constructor(width: number, height: number, field_generator: FieldGenerator<TerrainTypeID>) {
         this.width = width;
         this.height = height;
-        this.events = new WorldEventDelegator();
+        this.events = new WorldEventDelegator(this);
         this.field_generator = field_generator;
         this.fields = this.construct_fields();
     }
@@ -79,12 +80,20 @@ export default class WorldMap<TerrainTypeID> {
         });
     }
 
+    public effect(pos: Point) {
+        const field = this.at(pos);
+        if (field) {
+            this.on_effect.trigger_event(field);
+        }
+    }
+
     public static factory<TerrainTypeID>() {
         return (width: number, height: number) =>
             (field_generator: FieldGenerator<TerrainTypeID>) => {
                 return new WorldMap(width, height, field_generator);
             };
     }
+
 }
 
 class WorldEventDelegator {
@@ -93,6 +102,11 @@ class WorldEventDelegator {
     public readonly on_touches: ListenerSocket<ObjectTouchesEvent> = new ListenerSocket();
     public readonly on_damaged: ListenerSocket<ObjectDamagedEvent> = new ListenerSocket();
     public readonly on_attack: ListenerSocket<ObjectAttacksEvent> = new ListenerSocket();
+    public readonly on_effect: ListenerSocket<Field> = new ListenerSocket();
+
+    public constructor(map: WorldMap<TerrainTypeID>) {
+        map.on_effect.add((event) => this.on_effect.trigger_event(event));
+    }
 
     public connect(object: MapObject) {
         object.on_destroy.add((event: ObjectDestroyedEvent) => this.on_destroy.trigger_event(event));

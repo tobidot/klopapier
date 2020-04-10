@@ -199,17 +199,40 @@ export default class Game {
         await this.images.wait_until_loaded();
 
         let map_images = [
-            ImageID.MAPS__MAP1,
-            ImageID.MAPS__MAP2,
-            ImageID.MAPS__MAP3,
-            ImageID.MAPS__MAP4,
-            ImageID.MAPS__MAP5,
-            ImageID.MAPS__MAP6,
-            ImageID.MAPS__MAP7,
-            ImageID.MAPS__MAP8,
-            ImageID.MAPS__MAP9,
+            "map1",
+            "map2",
+            "map3",
+            "map4",
+            "map5",
+            "map6",
+            "map7",
+            "map8",
+            "map9",
+            // ImageID.MAPS__MAP1,
+            // ImageID.MAPS__MAP2,
+            // ImageID.MAPS__MAP3,
+            // ImageID.MAPS__MAP4,
+            // ImageID.MAPS__MAP5,
+            // ImageID.MAPS__MAP6,
+            // ImageID.MAPS__MAP7,
+            // ImageID.MAPS__MAP8,
+            // ImageID.MAPS__MAP9,
         ];
-        this.levels = map_images.map(this.images.get.bind(this)).map(load_mapdata_from_image);
+        this.levels = map_images.map((image_id: string | ImageID, index: number) => {
+            if (typeof image_id === "string") {
+                const element = document.getElementById(image_id);
+                if (element instanceof HTMLImageElement) {
+                    element.addEventListener('click', () => {
+                        this.current_level = index;
+                        this.reset_level();
+                    });
+                    return element;
+                }
+                throw new Error('Invalid Map Image ID');
+            } else {
+                return this.images.get(image_id);
+            }
+        }).map(load_mapdata_from_image);
         this.reset_level();
 
         setInterval(() => {

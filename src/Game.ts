@@ -66,9 +66,15 @@ export default class Game {
         map3
     ];
     private intersections: Array<Array<ImageID>> = [
-        [
-            ImageID.TUTORIAL__LEVEL1,
-        ],
+        [ImageID.TUTORIAL__LEVEL1,],
+        [ImageID.TUTORIAL__LEVEL2,],
+        [ImageID.TUTORIAL__LEVEL3,],
+        [ImageID.TUTORIAL__LEVEL4,],
+        [ImageID.TUTORIAL__LEVEL5,],
+        [ImageID.TUTORIAL__LEVEL6,],
+        [ImageID.TUTORIAL__LEVEL7,],
+        [ImageID.TUTORIAL__LEVEL8,],
+        [ImageID.TUTORIAL__LEVEL9,],
     ];
     private current_intersect: number | null = 0;
 
@@ -107,6 +113,7 @@ export default class Game {
             this.reset_level();
         }
         this.input_delegator.on_interact = () => {
+            if (this.current_intersect !== null) this.current_intersect = null;
             if (this.has_won || this.has_lost) this.reset_level();
         }
 
@@ -325,6 +332,13 @@ export default class Game {
         this.visualizers.life.display(this.object);
         this.visualizers.fps_counter(this.fps_counter.get_current_fps());
         this.visualizers.infection.display(this.infection_count);
+        if (this.current_intersect !== null && this.intersections[this.current_level]) {
+            let intersect_image_id = this.intersections[this.current_level][this.current_intersect];
+            if (intersect_image_id) {
+                const image = this.images.get(intersect_image_id);
+                this.context.drawImage(image, 0, 0);
+            }
+        }
     }
 
     draw_loose_screen() {

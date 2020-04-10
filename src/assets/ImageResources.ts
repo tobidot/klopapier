@@ -43,6 +43,11 @@ export enum ImageID {
     MAPS__MAP2,
     MAPS__MAP3,
     MAPS__MAP4,
+    MAPS__MAP5,
+    MAPS__MAP6,
+    MAPS__MAP7,
+    MAPS__MAP8,
+    MAPS__MAP9,
 
     TUTORIAL__LEVEL1,
     TUTORIAL__LEVEL2,

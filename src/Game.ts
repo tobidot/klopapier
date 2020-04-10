@@ -109,10 +109,12 @@ export default class Game {
         this.input_delegator.on_use_spray = this.on_input_use_spray;
         this.input_delegator.on_eat = this.on_input_eat;
         this.input_delegator.on_request_menu = () => {
-            this.current_level++;
+            if (this.has_won || this.has_lost) this.current_level++;
             this.reset_level();
         }
         this.input_delegator.on_interact = () => {
+        }
+        this.input_delegator.on_pause = () => {
             if (this.current_intersect !== null) this.current_intersect = null;
             if (this.has_won || this.has_lost) this.reset_level();
         }
@@ -148,6 +150,7 @@ export default class Game {
     }
 
     private reset_level() {
+        this.current_intersect = 0;
         this.input_delegator.game_over = this.has_won = this.has_lost = false;
         this.objects.map((object) => object.destroy());
         this.objects = [];
@@ -199,6 +202,11 @@ export default class Game {
             ImageID.MAPS__MAP2,
             ImageID.MAPS__MAP3,
             ImageID.MAPS__MAP4,
+            ImageID.MAPS__MAP5,
+            ImageID.MAPS__MAP6,
+            ImageID.MAPS__MAP7,
+            ImageID.MAPS__MAP8,
+            ImageID.MAPS__MAP9,
         ];
         this.levels = map_images.map(this.images.get.bind(this)).map(load_mapdata_from_image);
         this.reset_level();
@@ -229,7 +237,7 @@ export default class Game {
 
         this.time_to_refresh_items -= delta_seconds;
         const should_refreshing_items = this.time_to_refresh_items < 0;
-        const chance_to_spawn_items = Math.min(0.2, 10 / (this.day * this.day + 5));
+        const chance_to_spawn_items = Math.min(0.1, 8 / (this.day * (this.day + 2) + 70));
         if (should_refreshing_items) this.time_to_refresh_items += 4;
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
             if (should_refreshing_items && Math.random() < chance_to_spawn_items && !field.object) {
@@ -330,8 +338,8 @@ export default class Game {
         //this.context.fillRect(650, 500, 150, 100);
         this.visualizers.daytime.display(this.time_of_day / 24, this.day);
         this.visualizers.life.display(this.object);
-        this.visualizers.fps_counter(this.fps_counter.get_current_fps());
-        this.visualizers.infection.display(this.infection_count);
+        //this.visualizers.fps_counter(this.fps_counter.get_current_fps());
+        //this.visualizers.infection.display(this.infection_count);
         if (this.current_intersect !== null && this.intersections[this.current_level]) {
             let intersect_image_id = this.intersections[this.current_level][this.current_intersect];
             if (intersect_image_id) {
@@ -348,6 +356,12 @@ export default class Game {
         this.context.font = '48px fantasy';
         this.context.fillStyle = 'gold';
         this.context.fillText('Day ' + this.day, 150, 150, 200);
+
+        this.context.font = '24px fantasy';
+        this.context.fillStyle = 'white';
+        this.context.fillText('Press SPACE to retry', 200, 550, 300);
+        this.context.font = '16px fantasy';
+        this.context.fillText('Press ESC to skip level', 500, 550, 200);
         this.input_delegator.game_over = true;
         return;
     }
@@ -359,6 +373,10 @@ export default class Game {
         this.context.font = '48px fantasy';
         this.context.fillStyle = 'gold';
         this.context.fillText('Day ' + this.day, 150, 150, 200);
+
+        this.context.font = '24px fantasy';
+        this.context.fillStyle = 'white';
+        this.context.fillText('Press SPACE to continue', 200, 550, 300);
         this.input_delegator.game_over = true;
         return;
     }

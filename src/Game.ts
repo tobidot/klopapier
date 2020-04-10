@@ -266,6 +266,7 @@ export default class Game {
         if (this.time_of_day >= 24) {
             this.day++;
             this.time_of_day -= 24;
+            this.paper_kiled = -1;
         }
         if (this.time_of_day >= this.paper_kiled + 1) {
             this.paper_kiled = Math.floor(this.time_of_day);
@@ -275,7 +276,7 @@ export default class Game {
                 [Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP].map((direction: Direction) => {
                     const target = pos.add(direction_to_point(direction, 1));
                     const target_field = this.world_map.at(target);
-                    if (target_field && target_field.terrain.type === TerrainTypeID.OUTDOOR_GRAS && target_field.terrain.variation_key === "with_paper") {
+                    if (target_field && target_field.terrain.variation_key === "with_paper") {
                         this.world_map.effect(target);
                         this.world_map.update_field_at_point(target, {
                             terrain: {

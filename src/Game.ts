@@ -16,7 +16,7 @@ import { DamageType } from "./logic/fight/DamageType";
 import Agent from "./logic/map/objects/Agent";
 import InventarOnScreen from "./visualization/InventarOnScreen";
 import Paperroll from "./logic/map/objects/Klopapier";
-import { image_resources } from "./assets/ImageResources";
+import { image_resources, ImageID } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
 import InventarComponent from "./logic/map/objects/components/InventarComponent";
 import MapObject from "./logic/map/objects/abstract/MapObject";
@@ -34,6 +34,7 @@ import { data as map2 } from "./logic/data/Map2";
 import { data as map3 } from "./logic/data/Map3";
 import { runInThisContext } from "vm";
 import InfectionOnScreen from "./visualization/InfectionOnScreen";
+import { load_mapdata_from_image } from "./logic/data/MapDataLoader";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -57,7 +58,11 @@ export default class Game {
     public has_won: boolean = false;
     public has_lost: boolean = false;
     public current_level = 0;
-    private levels = [map1, map2, map3];
+    private levels = [
+        map1,
+        map2,
+        map3
+    ];
 
     private visualizers: {
         fps_counter: (print: number) => void,
@@ -89,6 +94,10 @@ export default class Game {
         this.input_delegator.on_use_paper = this.on_input_use_paper;
         this.input_delegator.on_use_spray = this.on_input_use_spray;
         this.input_delegator.on_eat = this.on_input_eat;
+        this.input_delegator.on_request_menu = () => {
+            this.current_level++;
+            this.reset_level();
+        }
         this.input_delegator.on_interact = () => {
             if (this.has_won || this.has_lost) this.reset_level();
         }
@@ -169,6 +178,15 @@ export default class Game {
 
     async start() {
         await this.images.wait_until_loaded();
+
+        let map_images = [
+            ImageID.MAPS__MAP1,
+            ImageID.MAPS__MAP2,
+            ImageID.MAPS__MAP3,
+            ImageID.MAPS__MAP4,
+        ];
+        this.levels = map_images.map(this.images.get.bind(this)).map(load_mapdata_from_image);
+        this.reset_level();
 
         setInterval(() => {
             this.fps_counter.update();

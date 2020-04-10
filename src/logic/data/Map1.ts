@@ -7,6 +7,7 @@ import Wall from "../map/objects/Wall";
 import Nudel from "../map/objects/Nudel";
 import Furniture1 from "../map/objects/Furniture1";
 import { Direction } from "../../ts_library/space/Direction";
+import { load_mapdata_from_image } from "./MapDataLoader";
 
 const tin = TerrainTypeID.INDOOR_SHOP;
 const tout = TerrainTypeID.OUTDOOR_GRAS;
@@ -104,6 +105,4 @@ data.put(dixi, 5, 5, Direction.LEFT);
 data.set(7, 0, {
     object: Virus,
 });
-
-
 

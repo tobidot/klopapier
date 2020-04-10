@@ -38,6 +38,10 @@ export enum ImageID {
 
     UNIT__VIRUS,
 
+    MAPS__MAP1,
+    MAPS__MAP2,
+    MAPS__MAP3,
+    MAPS__MAP4,
     OTHER__ERROR,
 };
 

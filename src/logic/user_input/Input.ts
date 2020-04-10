@@ -8,6 +8,7 @@ export class InputDelegator {
     public on_use_spray?: () => void;
     public on_eat?: () => void;
     public on_interact?: () => void;
+    public on_request_menu?: () => void;
     public game_over: boolean = false;
     public buffer_action: string = "";
 
@@ -54,6 +55,7 @@ export class InputDelegator {
             case "KeyQ": this.on_use_spray && this.on_use_spray(); break;
             case "KeyW": this.on_use_paper && this.on_use_paper(); break;
             case "KeyE": this.on_eat && this.on_eat(); break;
+            case "Escape": this.on_request_menu && this.on_request_menu(); break;
         }
         return true;
     }

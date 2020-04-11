@@ -8,7 +8,7 @@
     "build": "npx parcel build ./src/index.html -d ./dist-build --public-url ./",
     "package": "zip ./dist-build/dist-build.zip ./dist-build/*.*",
 
-    "watch:utils": "npx parcel build ./src/index.html -d ./dist-build --public-url ./",
+    "watch:utils": "tsc --build ./utils/tsconfig.json --watch",
     "parse:levels": "node ./utils/dist/index.js ./src/assets/images/maps/"
   },
   "author": "tobidot <Object.name@live.de>",

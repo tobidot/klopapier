@@ -32,7 +32,25 @@ export function load_mapdata_from_image(image: HTMLImageElement): MapData {
     return mapdata;
 }
 
-function color_to_mapfielddata(color: number): Partial<MapFieldData> {
+
+export function load_mapdata_from_image_array(width: number, height: number, data: number[]): MapData {
+    let [player_x, player_y] = data.reduce((pos: [number, number], color: number, index: number) => {
+        if (color === Colors.CYAN || color === Colors.DARK_CYAN) {
+            let new_pos: [number, number] = [index % width, Math.floor(index / width)];
+            return new_pos;
+        }
+        return pos;
+    }, [Math.floor(width / 2), Math.floor(height / 2)]);
+    let mapdata = new MapData(width, height, player_x, player_y);
+    data.forEach((color: number, index: number) => {
+        const x = index % width;
+        const y = Math.trunc(index / width);
+        mapdata.set(x, y, color_to_mapfielddata(color));
+    });
+    return mapdata;
+}
+
+export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
     switch (color) {
         case Colors.BLACK: return {
             terrain: TerrainTypeID.INDOOR_SHOP,

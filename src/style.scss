@@ -38,3 +38,12 @@
         }
     }
 }
+
+#levels {
+    display: flex;
+    border: gray 2px solid;
+    padding: 2px;
+    flex-flow: row;
+    justify-content: space-evenly;
+    align-items: center;
+}

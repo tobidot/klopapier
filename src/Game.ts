@@ -28,13 +28,20 @@ import LifeOnScreen from "./visualization/LifeOnScreen";
 import DayTimeOnScreen from "./visualization/DayTimeOnScreen";
 import InfectedWalkingComponent from "./logic/map/objects/components/InfectedWalkingComponent";
 import InfectedSpreadComponent from "./logic/map/objects/components/InfectedSpreadComponent";
-import MapData from "./logic/data/MapData";
-import { data as map1 } from "./logic/data/Map1";
-import { data as map2 } from "./logic/data/Map2";
-import { data as map3 } from "./logic/data/Map3";
+import MapData, { MapFieldData } from "./logic/data/MapData";
 import { runInThisContext } from "vm";
 import InfectionOnScreen from "./visualization/InfectionOnScreen";
-import { load_mapdata_from_image } from "./logic/data/MapDataLoader";
+import { load_mapdata_from_image, color_to_mapfielddata, load_mapdata_from_image_array } from "./logic/data/MapDataLoader";
+import { map1_src, map2_src, map3_src, map4_src, map5_src, map6_src, map7_src, map8_src, map9_src } from "./logic/data/MapImages";
+import { map1 } from "./assets/images/maps/map1";
+import { map2 } from "./assets/images/maps/map2";
+import { map3 } from "./assets/images/maps/map3";
+import { map4 } from "./assets/images/maps/map4";
+import { map5 } from "./assets/images/maps/map5";
+import { map6 } from "./assets/images/maps/map6";
+import { map7 } from "./assets/images/maps/map7";
+import { map8 } from "./assets/images/maps/map8";
+import { map9 } from "./assets/images/maps/map9";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -61,11 +68,17 @@ export default class Game {
     public has_won: boolean = false;
     public has_lost: boolean = false;
     public current_level = 0;
-    private levels = [
+    private levels: MapData[] = [
         map1,
         map2,
-        map3
-    ];
+        map3,
+        map4,
+        map5,
+        map6,
+        map7,
+        map8,
+        map9,
+    ].map((map_data: { width: number, height: number, data: number[] }) => load_mapdata_from_image_array(map_data.width, map_data.height, map_data.data));
     private intersections: Array<Array<ImageID>> = [
         [ImageID.TUTORIAL__LEVEL1,],
         [ImageID.TUTORIAL__LEVEL2,],
@@ -196,43 +209,34 @@ export default class Game {
     }
 
     async start() {
-        await this.images.wait_until_loaded();
 
-        let map_images = [
-            "map1",
-            "map2",
-            "map3",
-            "map4",
-            "map5",
-            "map6",
-            "map7",
-            "map8",
-            "map9",
-            // ImageID.MAPS__MAP1,
-            // ImageID.MAPS__MAP2,
-            // ImageID.MAPS__MAP3,
-            // ImageID.MAPS__MAP4,
-            // ImageID.MAPS__MAP5,
-            // ImageID.MAPS__MAP6,
-            // ImageID.MAPS__MAP7,
-            // ImageID.MAPS__MAP8,
-            // ImageID.MAPS__MAP9,
+        const map_images_scr = [
+            map1_src,
+            map2_src,
+            map3_src,
+            map4_src,
+            map5_src,
+            map6_src,
+            map7_src,
+            map8_src,
+            map9_src,
         ];
-        this.levels = map_images.map((image_id: string | ImageID, index: number) => {
-            if (typeof image_id === "string") {
-                const element = document.getElementById(image_id);
-                if (element instanceof HTMLImageElement) {
-                    element.addEventListener('click', () => {
-                        this.current_level = index;
-                        this.reset_level();
-                    });
-                    return element;
-                }
-                throw new Error('Invalid Map Image ID');
-            } else {
-                return this.images.get(image_id);
-            }
-        }).map(load_mapdata_from_image);
+        const level_container = document.getElementById('levels');
+        if (!level_container) throw new Error('Could not find level container.');
+        const map_images = map_images_scr.map((src: string, index: number) => {
+            const image = document.createElement('img');
+            image.src = src;
+            level_container.appendChild(image);
+            image.addEventListener('click', () => {
+                this.current_level = index;
+                this.reset_level();
+            });
+            return image;
+        });
+
+
+        await this.images.wait_until_loaded();
+        // this.levels = map_images.map(load_mapdata_from_image);
         this.reset_level();
 
         setInterval(() => {

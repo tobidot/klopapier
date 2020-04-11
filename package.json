@@ -5,7 +5,8 @@
   "scripts": {
     "tsc": "tsc",
     "start": "npx parcel ./src/index.html -d ./dist",
-    "build": "npx parcel build ./src/index.html -d ./dist-build --public-url ./"
+    "build": "npx parcel build ./src/index.html -d ./dist-build --public-url ./",
+    "parse-levels": "node ./utils/mlvl.js ./src/assets/images/maps/map1.png"
   },
   "author": "tobidot <Object.name@live.de>",
   "license": "MIT",
@@ -14,6 +15,8 @@
     "parcel": "^1.12.4"
   },
   "devDependencies": {
+    "jimp": "^0.10.1",
+    "png-js": "^1.0.0",
     "sass": "^1.26.3",
     "typescript": "^3.8.3"
   }

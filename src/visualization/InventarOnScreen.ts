@@ -46,7 +46,7 @@ export default class InventarOnScreen {
                 this.context.drawImage(image, screen_x, screen_y, max_size, max_size)
             });
         }
-        this.context.resetTransform();
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     public get_image_for_inventar_item(name: string): HTMLImageElement {

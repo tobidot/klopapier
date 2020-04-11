@@ -17,18 +17,19 @@ export class InputDelegator {
         this.element = element;
         this.element.onkeydown = ((event: KeyboardEvent) => {
             if (this.on_interact) this.on_interact();
+            const key = event.code || event.key;
             //if (event.repeat) return;
-            if (event.code === "Escape") {
+            if (key === "Escape") {
                 this.on_request_menu && this.on_request_menu();
                 return;
             }
-            if (event.code === "Space" || event.code === "Spacebar") {
+            if (key === "Space" || key === "Spacebar" || key === " ") {
                 this.on_pause && this.on_pause();
                 return;
             }
             if (this.game_over) return;
-            if (this.try_action(event.code) === false) {
-                this.buffer_action = event.code;
+            if (this.try_action(key) === false) {
+                this.buffer_action = key;
             } else {
                 this.buffer_action = "";
             }
@@ -61,9 +62,9 @@ export class InputDelegator {
             case "ArrowDown":
                 if (this.on_direction_input) return this.on_direction_input(Direction.DOWN);
                 break;
-            case "KeyQ": this.on_use_spray && this.on_use_spray(); break;
-            case "KeyW": this.on_use_paper && this.on_use_paper(); break;
-            case "KeyE": this.on_eat && this.on_eat(); break;
+            case "q": case "Q": case "KeyQ": this.on_use_spray && this.on_use_spray(); break;
+            case "w": case "W": case "KeyW": this.on_use_paper && this.on_use_paper(); break;
+            case "e": case "E": case "KeyE": this.on_eat && this.on_eat(); break;
 
         }
         return true;

@@ -7,7 +7,7 @@ import Field from "./logic/map/Field";
 import { TerrainTypeID } from "./assets/TerrainResources";
 import FpsCounter from "./ts_library/utility/FpsCounter";
 import display_number_on_screen from "./visualization/NumberOnScreen";
-import WorldMapOnScreen from "./visualization/WorldMapOnScreen";
+import WorldMapVisualizerDefault from "./visualization/visualize_world/default/WorldMapVisualizerDefault";
 import { InputDelegator } from "./logic/user_input/Input";
 import { Direction } from "./ts_library/space/Direction";
 import { direction_to_point } from "./ts_library/conversion/fromDirection";
@@ -32,7 +32,6 @@ import MapData, { MapFieldData } from "./logic/data/MapData";
 import { runInThisContext } from "vm";
 import InfectionOnScreen from "./visualization/InfectionOnScreen";
 import { load_mapdata_from_image, color_to_mapfielddata, load_mapdata_from_image_array } from "./logic/data/MapDataLoader";
-import { map1_src, map2_src, map3_src, map4_src, map5_src, map6_src, map7_src, map8_src, map9_src } from "./logic/data/MapImages";
 import { map1 } from "./assets/images/maps/map1";
 import { map2 } from "./assets/images/maps/map2";
 import { map3 } from "./assets/images/maps/map3";
@@ -42,6 +41,7 @@ import { map6 } from "./assets/images/maps/map6";
 import { map7 } from "./assets/images/maps/map7";
 import { map8 } from "./assets/images/maps/map8";
 import { map9 } from "./assets/images/maps/map9";
+import { WorldMapVisualizer } from "./visualization/visualize_world/WorldMapVisualizer";
 
 export default class Game {
     private context: CanvasRenderingContext2D;
@@ -94,7 +94,7 @@ export default class Game {
 
     private visualizers: {
         fps_counter: (print: number) => void,
-        world_map: WorldMapOnScreen,
+        world_map: WorldMapVisualizer,
         inventar: InventarOnScreen,
         hunger: HungerOnScreen,
         life: LifeOnScreen,
@@ -154,7 +154,7 @@ export default class Game {
 
         this.visualizers = {
             fps_counter: display_number_on_screen(this.context)(0, 0),
-            world_map: WorldMapOnScreen.build()(this.context)(this.images)(this.world_map)(new Point(19, 14))(32),
+            world_map: new WorldMapVisualizerDefault(this.context, this.images),
             inventar: new InventarOnScreen(this.context, this.images, new Point(150, 500), new Point(2, 8)),
             hunger: new HungerOnScreen(this.context, this.images, Rect.from_boundries(0, 500, 650, 550)),
             life: new LifeOnScreen(this.context, this.images, Rect.from_boundries(0, 550, 650, 600)),
@@ -177,8 +177,6 @@ export default class Game {
         this.world_map.add_object(this.object);
         this.objects.push(this.object);
         this.camera_position = this.object.get_position();
-
-        this.visualizers.world_map = WorldMapOnScreen.build()(this.context)(this.images)(this.world_map)(new Point(19, 14))(32);
     }
 
     private construct_world_map(map_data: MapData): WorldMap<TerrainTypeID> {
@@ -192,12 +190,12 @@ export default class Game {
                 type: field_data.terrain,
                 variation_key: 'default',
             };
-            let object = null;
+            let object = [];
             if (field_data.object) {
-                object = new field_data.object(map, new Point(x, y));
-                this.objects.push(object);
+                object.push(new field_data.object(map, new Point(x, y)));
             }
-            const field: Field = { x, y, object, terrain };
+            this.objects.push(...object);
+            const field: Field = { location: new Point(x, y), objects: [], terrain };
             return field;
         };
         let map = WorldMap.factory()(map_data.width, map_data.height)(field_generator);
@@ -209,35 +207,32 @@ export default class Game {
     }
 
     async start() {
-
-        const map_images_scr = [
-            map1_src,
-            map2_src,
-            map3_src,
-            map4_src,
-            map5_src,
-            map6_src,
-            map7_src,
-            map8_src,
-            map9_src,
-        ];
         const level_container = document.getElementById('levels');
         if (!level_container) throw new Error('Could not find level container.');
-        const map_images = map_images_scr.map((src: string, index: number) => {
-            const image = document.createElement('img');
-            image.src = src;
+
+        await this.images.wait_until_loaded();
+        // this.levels = map_images.map(load_mapdata_from_image);
+        this.reset_level();
+
+
+        const map_images = [
+            this.images.get(ImageID.MAPS__MAP1),
+            this.images.get(ImageID.MAPS__MAP2),
+            this.images.get(ImageID.MAPS__MAP3),
+            this.images.get(ImageID.MAPS__MAP4),
+            this.images.get(ImageID.MAPS__MAP5),
+            this.images.get(ImageID.MAPS__MAP6),
+            this.images.get(ImageID.MAPS__MAP7),
+            this.images.get(ImageID.MAPS__MAP8),
+            this.images.get(ImageID.MAPS__MAP9),
+        ];
+        map_images.forEach((image, index) => {
             level_container.appendChild(image);
             image.addEventListener('click', () => {
                 this.current_level = index;
                 this.reset_level();
             });
-            return image;
         });
-
-
-        await this.images.wait_until_loaded();
-        // this.levels = map_images.map(load_mapdata_from_image);
-        this.reset_level();
 
         setInterval(() => {
             this.fps_counter.update();
@@ -251,7 +246,7 @@ export default class Game {
         this.to_add_objects = this.to_add_objects.filter((object: MapObject) => {
             const field = this.world_map.at(object.get_position());
             if (field) {
-                if (field.object) return true;
+                if (field.objects) return true;
                 this.objects.push(object);
                 this.world_map.add_object(object);
             }
@@ -269,18 +264,18 @@ export default class Game {
         if (should_refreshing_items) this.time_to_refresh_items += 4;
         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
             if (!should_refreshing_items) return field;
-            if (field.object) return field;
+            if (field.objects) return field;
             if (Math.random() < chance_to_spawn_items || this.bad_luck_protection > 1) {
                 this.bad_luck_protection = 0;
                 switch (field.terrain.type) {
                     case TerrainTypeID.INDOOR_TOILET:
-                        this.create_object(Paperroll, new Point(field.x, field.y));
+                        this.create_object(Paperroll, field.location);
                         break;
                     case TerrainTypeID.INDOOR_TABLE:
-                        this.create_object(Nudel, new Point(field.x, field.y));
+                        this.create_object(Nudel, field.location);
                         break;
                     case TerrainTypeID.INDOOR_CLINICAL_PALLETTE:
-                        this.create_object(Spray, new Point(field.x, field.y));
+                        this.create_object(Spray, field.location);
                         break;
                 }
             } else {
@@ -321,7 +316,7 @@ export default class Game {
                 this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
                     if (field.terrain.type === TerrainTypeID.OUTDOOR_GRAS && field.terrain.variation_key === "with_paper") {
                         if (Math.random() < config_chance_for_paper_to_enflame) {
-                            const target_pos = new Point(field.x, field.y);
+                            const target_pos = field.location;
                             this.world_map.effect(target_pos);
                             this.fires.push(target_pos);
                             return Object.assign({}, field, {
@@ -356,7 +351,10 @@ export default class Game {
             return;
         }
         const object_offset = this.object.moving_offset;
-        this.visualizers.world_map.set_camera(this.camera_position.add(object_offset)).display(delta_seconds);
+
+        this.visualizers.world_map.camera.map_source_rect.set_center(object_offset);
+        this.visualizers.world_map.display(this.world_map, delta_seconds);
+
         const time_of_day_p = (this.time_of_day / 24);
         if (time_of_day_p < 0.25 || time_of_day_p > 0.75) {
             const time_of_night_p = ((time_of_day_p + 1 - 0.75) % 1) * 2;
@@ -425,12 +423,12 @@ export default class Game {
         if (target_field) {
             this.object.attack(target_field, DamageType.SPRAY);
         }
-        if (target_field && target_field.object) {
-            target_field.object.damage({
+        if (target_field && target_field.objects) {
+            target_field.objects.forEach((object) => object.damage({
                 type: DamageType.SPRAY,
-                source: target_field.object,
+                source: this.object,
                 amount: 1,
-            });
+            }));
         }
     }
 

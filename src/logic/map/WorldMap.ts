@@ -30,7 +30,7 @@ export default class WorldMap<TerrainTypeID> {
     private construct_fields() {
         return [...new Array<Field>(this.width * this.height)].map((_, i) => {
             const field = this.field_generator(this, i % this.width, Math.trunc(i / this.width));
-            if (field.object) this.add_object(field.object);
+            if (field.objects) field.objects.forEach((object) => this.add_object(object));
             return field;
         });
     }
@@ -46,19 +46,16 @@ export default class WorldMap<TerrainTypeID> {
     }
 
     public add_object(object: MapObject) {
-        this.update_field_at_point(object.get_position(), { object });
+        this.update_field_at_point(object.get_position(), { objects: [object] });
         object.on_before_position_change.add((is_allowed: boolean, event: { old: Field, new: Field }): boolean => {
             const target_field = event.new;
             if (!target_field) return false;
-            const target_object = target_field.object;
-            if (target_object !== null) {
-                target_object.touched_by(object);
-                return false;
-            }
+            const has_touched_something = target_field.objects.reduce((result, object) => !!(object.touched_by(object)), true);
+            if (has_touched_something) return false;
             return is_allowed;
         });
         object.on_destroy.add(() => {
-            this.update_field_at_point(object.get_position(), { object: null });
+            this.update_field_at_point(object.get_position(), { objects: [] });
         });
         this.events.connect(object);
     }
@@ -75,7 +72,7 @@ export default class WorldMap<TerrainTypeID> {
         if (!safe_rect) return null;
         const fields = safe_rect.map_points_in_rect(pos => this.fields[pos.x + pos.y * this.width]);
         fields.map(callback).forEach((field: Field) => {
-            const id = field.x + field.y * this.width;
+            const id = field.location.x + field.location.y * this.width;
             this.fields[id] = field;
         });
     }

@@ -35,11 +35,11 @@ export default class InfectedSpreadComponent extends MapObjectComponent {
                     const field = this.map.at(target);
                     if (!field) return list;
                     if (field.terrain.variation_key === 'with_paper') return list;
-                    if (!field.object) {
+                    if (!field.objects) {
                         list.push(direction);
                         return list;
                     }
-                    if (field.object instanceof Agent) {
+                    if (field.objects instanceof Agent) {
                         list.push(direction);
                         return list;
                     };

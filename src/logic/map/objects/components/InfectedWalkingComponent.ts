@@ -43,8 +43,8 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                         const field = this.map.at(target);
                         if (!field) return list;
                         if (field.terrain.variation_key === 'with_paper') return list;
-                        if (field.object) {
-                            if (field.object instanceof Wall) return list;
+                        if (field.objects) {
+                            if (field.objects instanceof Wall) return list;
                         }
                         list.push(direction);
                         return list;
@@ -53,9 +53,9 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                 if (direction !== null) {
                     const target = this.object.get_position().add(direction_to_point(direction, 1));
                     const field = this.map.at(target);
-                    if (field && field.object) {
-                        if (field.object instanceof Agent) {
-                            field.object.damage({
+                    if (field && field.objects) {
+                        if (field.objects instanceof Agent) {
+                            field.objects.damage({
                                 amount: 1,
                                 source: this.object,
                                 type: DamageType.INFECT
@@ -63,8 +63,8 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
                             //this.object.attack(field, DamageType.INFECT);
                             //this.object.destroy();
                             return [];
-                        } else if (field.object instanceof Virus === false) {
-                            field.object.destroy();
+                        } else if (field.objects instanceof Virus === false) {
+                            field.objects.forEach((object) => object.destroy());
                         }
                     }
                     this.object.move_to(this.map, target);

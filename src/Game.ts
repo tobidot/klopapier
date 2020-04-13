@@ -161,6 +161,8 @@ export default class Game {
             daytime: new DayTimeOnScreen(this.context, this.images, Rect.from_boundries(650, 500, 800, 600)),
             infection: new InfectionOnScreen(this.context, this.images, Rect.from_boundries(400, 0, 650, 50)),
         };
+        this.visualizers.world_map.camera.map_source_rect = Rect.from_boundries(0, 0, 10, 10);
+        this.visualizers.world_map.camera.display_target_rect = Rect.from_boundries(0, 0, 600, 500);
     }
 
     private reset_level() {

@@ -3,18 +3,12 @@ import Field from "../../../logic/map/Field";
 import ImageManager from "../../../manager/ImageManager";
 import { Camera } from "../WorldMapVisualizer";
 import { TerrainDrawer } from "./TerrainDrawer";
+import { FieldPartDrawer } from "./FieldPartDrawer";
 
 
 export interface VisualFieldData {
     [key: string]: any;
 }
-
-export type FieldDrawerPartDraw = (image: HTMLImageElement, offset?: Point) => void;
-
-export abstract class FieldPartDrawer {
-    public abstract draw(draw: FieldDrawerPartDraw, field: Field, visual_data: VisualFieldData): void;
-}
-
 export default class FieldDrawer {
     public image_manager: ImageManager;
     public context: CanvasRenderingContext2D;

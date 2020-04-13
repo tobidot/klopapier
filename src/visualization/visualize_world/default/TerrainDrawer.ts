@@ -1,9 +1,8 @@
 import ImageManager from "../../../manager/ImageManager"; import Field from "../../../logic/map/Field";
 import Terrain from "../../../logic/map/Terrain"; import { ImageID } from "../../../assets/ImageResources";
 import { TerrainTypeID } from "../../../assets/TerrainResources";
-import { FieldPartDrawer, FieldDrawerPartDraw, VisualFieldData } from "./FieldDrawer";
-
-
+import { VisualFieldData } from "./FieldDrawer";
+import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
 
 export class TerrainDrawer extends FieldPartDrawer {
 

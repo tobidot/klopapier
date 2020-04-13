@@ -1,4 +1,4 @@
-import { FieldPartDrawer, FieldDrawerPartDraw, VisualFieldData } from "./FieldDrawer";
+import { VisualFieldData } from "./FieldDrawer";
 import ImageManager from "../../../manager/ImageManager";
 import Field from "../../../logic/map/Field";
 import MovingMapObject from "../../../logic/map/objects/abstract/MovingMapObject";
@@ -7,6 +7,7 @@ import { direction_to_point } from "../../../ts_library/conversion/fromDirection
 import { ImageID } from "../../../assets/ImageResources";
 import MapObject from "../../../logic/map/objects/abstract/MapObject";
 import { MapObjectTypeID } from "../../../assets/MapObjectResources";
+import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
 
 
 

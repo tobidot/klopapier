@@ -1,6 +1,7 @@
-import { FieldPartDrawer, FieldDrawerPartDraw, VisualFieldData } from "./FieldDrawer";
+import { VisualFieldData } from "./FieldDrawer";
 import ImageManager from "../../../manager/ImageManager";
 import Field from "../../../logic/map/Field";
+import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
 
 
 

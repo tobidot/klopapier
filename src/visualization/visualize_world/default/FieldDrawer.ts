@@ -24,19 +24,21 @@ export default class FieldDrawer {
         image_manager: ImageManager) {
         this.context = context;
         this.image_manager = image_manager;
-
-        this.partial_field_drawers.push(new TerrainDrawer(this.image_manager));
     }
 
     protected get_visual_data_for_field(field: Field): VisualFieldData {
         return {};
     }
 
+    public add(field_part_drrawer: FieldPartDrawer) {
+        this.partial_field_drawers.push(field_part_drrawer);
+    }
+
     public get_drawer_functions(): Array<((field: Field) => any)> {
         return this.partial_field_drawers.map((part_drawer) => {
             return (field: Field) => {
                 const data = this.get_visual_data_for_field(field);
-                this.next_field_screen_position = field.location.sub(this.camera.map_source_rect.center()).mul(this.field_size_in_pixels);
+                this.next_field_screen_position = field.location.sub(this.camera.map_source_rect.top_left()).mul(this.field_size_in_pixels);
                 part_drawer.draw(this.draw_part_field_function, field, data);
             }
         });

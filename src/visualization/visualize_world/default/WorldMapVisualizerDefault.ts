@@ -3,6 +3,8 @@ import { TerrainTypeID } from "../../../assets/TerrainResources";
 import ImageManager from "../../../manager/ImageManager";
 import { WorldMapVisualizer, Camera } from "../WorldMapVisualizer";
 import FieldDrawer from "./FieldDrawer";
+import { TerrainDrawer } from "./TerrainDrawer";
+import { ObjectDrawer } from "./ObjectDrawer";
 
 export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
     private field_drawer: FieldDrawer;
@@ -10,6 +12,9 @@ export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
     constructor(context: CanvasRenderingContext2D, image_manager: ImageManager) {
         super(context, image_manager);
         this.field_drawer = (new FieldDrawer(this.context, this.image_manager));
+
+        this.field_drawer.add(new TerrainDrawer(this.image_manager));
+        this.field_drawer.add(new ObjectDrawer(this.image_manager));
         this.field_drawer.camera = this.camera;
         context.imageSmoothingEnabled = false;
     }

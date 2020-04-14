@@ -105,6 +105,11 @@ export class Rect implements IRect {
         this.bottom = Math.max(top, bottom);;
     }
 
+    public top_left(): Point { return new Point(this.top, this.left); }
+    public top_right(): Point { return new Point(this.top, this.right); }
+    public bottom_left(): Point { return new Point(this.bottom, this.left); }
+    public bottom_right(): Point { return new Point(this.bottom, this.right); }
+
     public width(): number {
         return this.right - this.left;
     }
@@ -150,9 +155,9 @@ export class Rect implements IRect {
     }
 
     public set_center(center: Point): Rect {
-        let center_x_offset = (this.left + this.right) / 2;
-        let center_y_offset = (this.top + this.bottom) / 2;
-        return this.move_by(center_x_offset, center_y_offset);
+        const old_center = this.center();
+        const moved_by = center.sub(old_center);
+        return this.move_by(moved_by.x, moved_by.y);
     }
 
     public get_inner_rect(border: number): Rect {

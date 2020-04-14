@@ -67,14 +67,11 @@ export default class WorldMap<TerrainTypeID> {
         }
     }
 
-    public map_fields_in_rect(rect: Rect, callback: FieldCallback) {
+    public map_fields_in_rect(rect: Rect, callback: FieldCallback): Array<Field> {
         const safe_rect = this.get_map_boundries().get_intersection(rect);
-        if (!safe_rect) return null;
+        if (!safe_rect) return [];
         const fields = safe_rect.map_points_in_rect(pos => this.fields[pos.x + pos.y * this.width]);
-        fields.map(callback).forEach((field: Field) => {
-            const id = field.location.x + field.location.y * this.width;
-            this.fields[id] = field;
-        });
+        return fields.map(callback);
     }
 
     public effect(pos: Point) {

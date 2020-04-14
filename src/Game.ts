@@ -192,12 +192,12 @@ export default class Game {
                 type: field_data.terrain,
                 variation_key: 'default',
             };
-            let object = [];
+            let objects = [];
             if (field_data.object) {
-                object.push(new field_data.object(map, new Point(x, y)));
+                objects.push(new field_data.object(map, new Point(x, y)));
             }
-            this.objects.push(...object);
-            const field: Field = { location: new Point(x, y), objects: [], terrain };
+            this.objects.push(...objects);
+            const field: Field = { location: new Point(x, y), objects, terrain };
             return field;
         };
         let map = WorldMap.factory()(map_data.width, map_data.height)(field_generator);

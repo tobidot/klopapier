@@ -6,10 +6,23 @@ import { GameMode } from "./GameMode";
 
 export interface GameState {
     modus: GameMode;
+    calculated: GameCalculatedState;
 
     world_map: WorldMap<TerrainTypeID>;
+    day: number;
     time_of_day: number;
     camera_position: Point;
     current_level: number;
+}
 
+export interface GameCalculatedState {
+    has_won: boolean;
+    has_lost: boolean;
+}
+
+export function update_calculated_flags(): GameCalculatedState {
+    return {
+        has_won: false,
+        has_lost: false,
+    };
 }

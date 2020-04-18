@@ -38,13 +38,21 @@ import { WorldMapVisualizer } from "./visualization/visualize_world/WorldMapVisu
 import { Task } from "./logic/flow/Task";
 import { GameState } from "./main/GameState";
 import { GameMode } from "./main/GameMode";
+import CreateMap from "./logic/map/helper/CreateMap";
 
 export default class Game {
+    // Assets / Targets
     private context: CanvasRenderingContext2D;
     private images: ImageManager;
-    //private players: Array<Player>;
+
+    // Various Helpers
     private fps_counter: FpsCounter = new FpsCounter(60, 60);
+    private creator_map: CreateMap = new CreateMap();
+
+
+    //private players: Array<Player>;
     private input_delegator: InputDelegator;
+
 
 
     private to_add_objects: Array<MapObject> = [];
@@ -141,13 +149,13 @@ export default class Game {
 
 
         // load map
-        const map_data: MapData = this.levels[0];
+        this.creator_map.map_data = this.levels[0];
 
         this.game_state = {
             current_level: 0,
             camera_position: new Point(0, 0),
-            world_map: this.construct_world_map(map_data),
-            time_of_day: map_data.start_day_time,
+            world_map: this.creator_map.build(),
+            time_of_day: this.creator_map.get_start_time_of_day(),
             modus: GameMode.INITIAL
         }
 
@@ -172,32 +180,10 @@ export default class Game {
 
         const map_data: MapData = this.levels[this.game_state.current_level];
         this.time_of_day = map_data.start_day_time;
-        this.game_state.world_map = this.construct_world_map(map_data);
+        this.game_state.world_map = this.creator_map.build(map_data);
 
         // this.object = new Agent(new Point(map_data.player_x, map_data.player_y));
         // this.game_state.camera_position = this.object.get_position();
-    }
-
-    private construct_world_map(map_data: MapData): WorldMap<TerrainTypeID> {
-        let field_generator: FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => {
-            const field_data = map_data.at(x, y);
-            const possible_terrain = [
-                TerrainTypeID.INDOOR_SHOP,
-                TerrainTypeID.OUTDOOR_GRAS,
-            ];
-            const terrain: Terrain = {
-                type: field_data.terrain,
-                variation_key: 'default',
-            };
-            let objects = [];
-            if (field_data.object) {
-                objects.push(new field_data.object(map, new Point(x, y)));
-            }
-            const field: Field = { location: new Point(x, y), objects, terrain };
-            return field;
-        };
-        let map = new WorldMap(map_data.width, map_data.height, field_generator);
-        return map;
     }
 
     private construct_image_manager(): ImageManager {

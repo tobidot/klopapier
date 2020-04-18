@@ -1,8 +1,8 @@
-import { RectSize, Point } from "../ts_library/space/SimpleShapes";
-import InventarComponent from "../logic/map/objects/components/InventarComponent";
-import MapObject from "../logic/map/objects/abstract/MapObject";
-import ImageManager from "../manager/ImageManager";
-import { ImageID } from "../assets/ImageResources";
+import { RectSize, Point } from "../../ts_library/space/SimpleShapes";
+import InventarComponent from "../../logic/map/objects/components/InventarComponent";
+import MapObject from "../../logic/map/objects/abstract/MapObject";
+import ImageManager from "../../manager/ImageManager";
+import { ImageID } from "../../assets/ImageResources";
 
 export default class InventarOnScreen {
     private images: ImageManager;

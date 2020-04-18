@@ -1,29 +1,14 @@
 import ImageManager from "./manager/ImageManager";
-import { randomBytes } from "crypto";
-import WorldMap, { FieldGenerator } from "./logic/map/WorldMap";
-import Terrain from "./logic/map/Terrain";
 import { Point, Rect } from "./ts_library/space/SimpleShapes";
-import Field from "./logic/map/Field";
-import { TerrainTypeID } from "./assets/TerrainResources";
 import FpsCounter from "./ts_library/utility/FpsCounter";
-import display_number_on_screen from "./visualization/NumberOnScreen";
-import WorldMapVisualizerDefault from "./visualization/visualize_world/default/WorldMapVisualizerDefault";
 import { InputDelegator } from "./logic/user_input/Input";
-import { Direction } from "./ts_library/space/Direction";
-import InventarOnScreen from "./visualization/InventarOnScreen";
 import Paperroll from "./logic/map/objects/Klopapier";
 import { image_resources, ImageID } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
 import MapObject from "./logic/map/objects/abstract/MapObject";
 import Nudel from "./logic/map/objects/Nudel";
 import Spray from "./logic/map/objects/Spray";
-import HungerOnScreen from "./visualization/HungerOnScreen";
-import LifeOnScreen from "./visualization/LifeOnScreen";
-import DayTimeOnScreen from "./visualization/DayTimeOnScreen";
-import InfectedWalkingComponent from "./logic/map/objects/components/InfectedWalkingComponent";
-import InfectedSpreadComponent from "./logic/map/objects/components/InfectedSpreadComponent";
 import MapData, { MapFieldData } from "./logic/data/MapData";
-import InfectionOnScreen from "./visualization/InfectionOnScreen";
 import { load_mapdata_from_image_array } from "./logic/data/MapDataLoader";
 import { map1 } from "./assets/images/maps/map1";
 import { map2 } from "./assets/images/maps/map2";
@@ -56,24 +41,9 @@ export default class Game {
     private input_delegator: InputDelegator;
     private input_handler: GameInputHandler;
 
-
-
-    private to_add_objects: Array<MapObject> = [];
-    private infection_count: number = 0;
-
     private tasks: Array<Task> = [];
     private game_state: GameState;
 
-    public bad_luck_protection = 0;
-    public time_to_refresh_items: number = 0;
-    public time_of_day: number = 0;
-    public day: number = 0;
-
-    public paper_kiled: number = 0;
-    public fires: Array<Point> = [];
-
-    public has_won: boolean = false;
-    public has_lost: boolean = false;
     private levels: MapData[] = [
         map1,
         map2,
@@ -115,21 +85,16 @@ export default class Game {
         this.input_delegator = new InputDelegator(element);
         //
 
-
         // add visual representives        
         this.images = this.construct_image_manager();
         this.images.on_progress_listener.add(([progress, image]) => {
             this.context.drawImage(image, canvas.width / 2 - image.width / 2, canvas.height / 2 - image.height / 2);
         });
 
-
-        // load map
-        this.creator_map.map_data = this.levels[0];
-
         this.game_state = {
             current_level: 0,
             camera_position: new Point(0, 0),
-            world_map: this.creator_map.build(),
+            world_map: this.creator_map.build(this.levels[0]),
             time_of_day: this.creator_map.get_start_time_of_day(),
             day: 0,
             modus: GameMode.INITIAL,

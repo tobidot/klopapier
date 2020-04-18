@@ -1,8 +1,4 @@
-import ImageManager from "../manager/ImageManager";
-import { image_resources, ImageID } from "../assets/ImageResources";
-import { RectSize, Rect } from "../ts_library/space/SimpleShapes";
-import MapObject from "../logic/map/objects/abstract/MapObject";
-import HungerComponent from "../logic/map/objects/components/HungerComponent";
+import ImageManager from "../../manager/ImageManager"; import { Rect } from "../../ts_library/space/SimpleShapes"; import { ImageID } from "../../assets/ImageResources";
 
 export default class DayTimeOnScreen {
     private context: CanvasRenderingContext2D;

@@ -1,7 +1,7 @@
-import ImageManager from "../manager/ImageManager";
-import MapObject from "../logic/map/objects/abstract/MapObject";
-import HungerComponent from "../logic/map/objects/components/HungerComponent";
-import { Rect } from "../ts_library/space/SimpleShapes";
+import ImageManager from "../../manager/ImageManager";
+import MapObject from "../../logic/map/objects/abstract/MapObject";
+import HungerComponent from "../../logic/map/objects/components/HungerComponent";
+import { Rect } from "../../ts_library/space/SimpleShapes";
 
 export default class InfectionOnScreen {
     private context: CanvasRenderingContext2D;

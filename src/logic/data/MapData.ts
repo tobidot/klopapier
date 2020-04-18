@@ -24,7 +24,6 @@ export default class MapData {
     public readonly height: number;
     public readonly player_x: number;
     public readonly player_y: number;
-    public start_day_time: number = 10;
     private snippets: MapDataSnippet[] = [];
 
     public data: {

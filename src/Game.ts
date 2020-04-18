@@ -26,6 +26,7 @@ import { GameMode } from "./main/GameMode";
 import CreateMap from "./logic/map/helper/CreateMap";
 import GameInputHandler from "./main/GameInputHandler";
 import GameVisualizer from "./main/GameVisualizer";
+import GameLevels from "./main/GameLevels";
 
 export default class Game {
     // Assets / Targets
@@ -41,35 +42,11 @@ export default class Game {
     private input_delegator: InputDelegator;
     private input_handler: GameInputHandler;
 
+    // 
     private tasks: Array<Task> = [];
     private game_state: GameState;
 
-    private levels: MapData[] = [
-        map1,
-        map2,
-        map3,
-        map4,
-        map5,
-        map6,
-        map7,
-        map8,
-        map9,
-    ].map((map_data: { width: number, height: number, data: number[] }) =>
-        load_mapdata_from_image_array(map_data.width, map_data.height, map_data.data)
-    );
-    private intersections: Array<Array<ImageID>> = [
-        [ImageID.TUTORIAL__LEVEL1,],
-        [ImageID.TUTORIAL__LEVEL2,],
-        [ImageID.TUTORIAL__LEVEL3,],
-        [ImageID.TUTORIAL__LEVEL4,],
-        [ImageID.TUTORIAL__LEVEL5,],
-        [ImageID.TUTORIAL__LEVEL6,],
-        [ImageID.TUTORIAL__LEVEL7,],
-        [ImageID.TUTORIAL__LEVEL8,],
-        [ImageID.TUTORIAL__LEVEL9,],
-    ];
-    private current_intersect: number | null = 0;
-
+    private level_handler: GameLevels;
     private visualizer: GameVisualizer;
 
     constructor(element: HTMLElement) {
@@ -90,12 +67,15 @@ export default class Game {
         this.images.on_progress_listener.add(([progress, image]) => {
             this.context.drawImage(image, canvas.width / 2 - image.width / 2, canvas.height / 2 - image.height / 2);
         });
+        // load levels
+        this.level_handler = new GameLevels();
+
 
         this.game_state = {
             current_level: 0,
-            camera_position: new Point(0, 0),
-            world_map: this.creator_map.build(this.levels[0]),
-            time_of_day: this.creator_map.get_start_time_of_day(),
+            camera_position: new Point(3, 3),
+            world_map: this.creator_map.build(this.level_handler.current().map_data),
+            time_of_day: this.level_handler.current().start_day_time,
             day: 0,
             modus: GameMode.INITIAL,
 
@@ -115,14 +95,11 @@ export default class Game {
     }
 
     private reset_level() {
-        this.current_intersect = 0;
-        this.input_delegator.game_over = this.has_won = this.has_lost = false;
         // this.objects.map((object) => object.destroy());
         // this.objects = [];
 
-        const map_data: MapData = this.levels[this.game_state.current_level];
-        this.time_of_day = map_data.start_day_time;
-        this.game_state.world_map = this.creator_map.build(map_data);
+        this.game_state.time_of_day = this.level_handler.current().start_day_time;
+        this.game_state.world_map = this.creator_map.build(this.level_handler.current().map_data);
 
         // this.object = new Agent(new Point(map_data.player_x, map_data.player_y));
         // this.game_state.camera_position = this.object.get_position();
@@ -155,7 +132,7 @@ export default class Game {
         map_images.forEach((image, index) => {
             level_container.appendChild(image);
             image.addEventListener('click', () => {
-                this.game_state.current_level = index;
+                this.level_handler.select(index);
                 this.reset_level();
             });
         });
@@ -268,9 +245,8 @@ export default class Game {
         this.context.clearRect(0, 0, 800, 600);
 
         this.visualizer.display(delta_seconds, this.game_state);
-
-
     }
+
     private handle(task: Task) {
         switch (task.name) {
             case "move_object":

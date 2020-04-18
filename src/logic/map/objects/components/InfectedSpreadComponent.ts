@@ -22,7 +22,7 @@ export default class InfectedSpreadComponent extends MapObjectComponent {
         super(InfectedSpreadComponent.NAME);
         this.map = map;
         this.object = object;
-        this.last_day = InfectedSpreadComponent.game.day;
+        // this.last_day = InfectedSpreadComponent.game.day;
     }
 
     public update(delta_seconds: number): Task[] {

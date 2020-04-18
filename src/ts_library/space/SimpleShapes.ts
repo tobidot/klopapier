@@ -14,7 +14,7 @@ export class Point implements IPoint {
         this.y = y;
     }
 
-    public add(other: Point): Point {
+    public add(other: IPoint): Point {
         return new Point(this.x + other.x, this.y + other.y);
     }
 
@@ -22,13 +22,13 @@ export class Point implements IPoint {
         return new Point(this.x - other.x, this.y - other.y);
     }
 
-    public mul(value: Point): Point;
+    public mul(value: IPoint): Point;
     public mul(value: number): Point;
-    public mul(value: Point | number) {
-        if (value instanceof Point) {
-            return new Point(this.x * value.x, this.y * value.y);
+    public mul(value: IPoint | number) {
+        if (typeof value === "number") {
+            return new Point(this.x * value, this.y * value);
         }
-        return new Point(this.x * value, this.y * value);
+        return new Point(this.x * value.x, this.y * value.y);
     }
 
     public equals(other: Point, epsilon?: number): boolean;

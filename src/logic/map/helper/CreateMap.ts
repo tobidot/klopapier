@@ -18,10 +18,6 @@ export default class CreateMap {
         return map;
     }
 
-    public get_start_time_of_day() {
-        return this.map_data.start_day_time;
-    }
-
     private field_generator = (map: WorldMap<TerrainTypeID>, x: number, y: number) => {
         const field_data = this.map_data.at(x, y);
         const possible_terrain = [

@@ -1,11 +1,11 @@
 import MapData, { MapFieldData } from "./MapData";
 import { deflate } from "zlib";
 import { TerrainTypeID } from "../../assets/TerrainResources";
-import Virus from "../map/objects/Virus";
-import Wall from "../map/objects/Wall";
-import Nudel from "../map/objects/Nudel";
-import Paperroll from "../map/objects/Klopapier";
 import Spray from "../map/objects/Spray";
+import Wall from "../map/objects/Wall";
+import Virus from "../map/objects/Virus";
+import Paperroll from "../map/objects/Klopapier";
+import Nudel from "../map/objects/Nudel";
 
 export function load_mapdata_from_image(image: HTMLImageElement): MapData {
     const canvas = new OffscreenCanvas(image.width, image.height);
@@ -65,7 +65,7 @@ export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
         };
         case Colors.WHITE: return {
             terrain: TerrainTypeID.INDOOR_SHOP,
-            object: Spray
+            object: Spray,
         };
 
 

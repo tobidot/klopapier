@@ -5,11 +5,10 @@ import { TerrainTypeID } from "../../../../assets/TerrainResources";
 import { Direction } from "../../../../ts_library/space/Direction";
 import { Point } from "../../../../ts_library/space/SimpleShapes";
 import { direction_to_point } from "../../../../ts_library/conversion/fromDirection";
-import { Agent } from "http";
 import { DamageType } from "../../../fight/DamageType";
 import { get_random_of_array } from "../../../../ts_library/utility/RandomObjects";
 import Game from "../../../../Game";
-import Virus from "../Virus";
+import { Task } from "../../../flow/Task";
 
 export default class InfectedSpreadComponent extends MapObjectComponent {
     public static game: Game;
@@ -26,33 +25,34 @@ export default class InfectedSpreadComponent extends MapObjectComponent {
         this.last_day = InfectedSpreadComponent.game.day;
     }
 
-    public update(delta_seconds: number) {
-        if (this.last_day < InfectedSpreadComponent.game.day) {
-            this.last_day = InfectedSpreadComponent.game.day;
-            const directions = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN].reduce(
-                (list: Direction[], direction: Direction): Direction[] => {
-                    const target = this.object.get_position().add(direction_to_point(direction, 1));
-                    const field = this.map.at(target);
-                    if (!field) return list;
-                    if (field.terrain.variation_key === 'with_paper') return list;
-                    if (!field.objects) {
-                        list.push(direction);
-                        return list;
-                    }
-                    if (field.objects instanceof Agent) {
-                        list.push(direction);
-                        return list;
-                    };
-                    return list;
-                }, []);
-            const direction = get_random_of_array<Direction>(directions);
-            if (direction !== null) {
-                const target = this.object.get_position().add(direction_to_point(direction, 1));
-                const field = this.map.at(target);
-                if (field) {
-                    InfectedSpreadComponent.game.create_object(Virus, target);
-                }
-            }
-        }
+    public update(delta_seconds: number): Task[] {
+        return [];
+        // if (this.last_day < InfectedSpreadComponent.game.day) {
+        //     this.last_day = InfectedSpreadComponent.game.day;
+        //     const directions = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN].reduce(
+        //         (list: Direction[], direction: Direction): Direction[] => {
+        //             const target = this.object.get_position().add(direction_to_point(direction, 1));
+        //             const field = this.map.at(target);
+        //             if (!field) return list;
+        //             if (field.terrain.variation_key === 'with_paper') return list;
+        //             if (!field.objects) {
+        //                 list.push(direction);
+        //                 return list;
+        //             }
+        //             if (field.objects instanceof Agent) {
+        //                 list.push(direction);
+        //                 return list;
+        //             };
+        //             return list;
+        //         }, []);
+        //     const direction = get_random_of_array<Direction>(directions);
+        //     if (direction !== null) {
+        //         const target = this.object.get_position().add(direction_to_point(direction, 1));
+        //         const field = this.map.at(target);
+        //         if (field) {
+        //             InfectedSpreadComponent.game.create_object(Virus, target);
+        //         }
+        //     }
+        // }
     }
 }

@@ -16,7 +16,7 @@ export default class HungerOnScreen {
     }
 
     display(object: MapObject) {
-        const hunger = object.components.get(HungerComponent);
+        const hunger = object.get(HungerComponent);
         if (!hunger) return;
         const bar_width = this.display_rect.width();
         const percentage = 1 - (hunger.urge_to_eat / 100.0);

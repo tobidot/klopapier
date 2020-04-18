@@ -1,12 +1,10 @@
 import { TerrainTypeID } from "../../assets/TerrainResources";
-import Spray from "../map/objects/Spray";
-import Nudel from "../map/objects/Nudel";
-import Paperroll from "../map/objects/Klopapier";
-import Virus from "../map/objects/Virus";
-import { type } from "os";
-import { timingSafeEqual } from "crypto";
 import Wall from "../map/objects/Wall";
 import { Direction } from "../../ts_library/space/Direction";
+import Spray from "../map/objects/Spray";
+import Virus from "../map/objects/Virus";
+import Paperroll from "../map/objects/Klopapier";
+import Nudel from "../map/objects/Nudel";
 
 
 type AllowedObjectType = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;

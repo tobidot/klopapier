@@ -25,7 +25,7 @@ export default class InventarOnScreen {
 
     public display(object: MapObject) {
         this.context.translate(650, 0);
-        const inventar = object.components.get<InventarComponent>(InventarComponent);
+        const inventar = object.get(InventarComponent);
         if (inventar) {
             this.context.font = '32px';
             this.context.fillStyle = 'yellow';

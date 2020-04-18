@@ -6,6 +6,7 @@ import MapObject from "./objects/abstract/MapObject";
 import { callbackify } from "util";
 import { ListenerSocket } from "../../ts_library/ui/Listener";
 import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectTouchedEvent, ObjectDamagedEvent, ObjectTouchesEvent } from "./Events";
+import { Task } from "../flow/Task";
 
 export type FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => Field;
 // export type TerrainTypeMap = Map<TerrainTypeID, TerrainType>;
@@ -15,11 +16,11 @@ export default class WorldMap<TerrainTypeID> {
     public readonly width: number;
     public readonly height: number;
     public readonly events: WorldEventDelegator;
+
     private fields: Array<Field> = [];
     private field_generator: FieldGenerator<TerrainTypeID>;
-    public readonly on_effect: ListenerSocket<Field> = new ListenerSocket();
 
-    private constructor(width: number, height: number, field_generator: FieldGenerator<TerrainTypeID>) {
+    public constructor(width: number, height: number, field_generator: FieldGenerator<TerrainTypeID>) {
         this.width = width;
         this.height = height;
         this.events = new WorldEventDelegator(this);
@@ -30,9 +31,12 @@ export default class WorldMap<TerrainTypeID> {
     private construct_fields() {
         return [...new Array<Field>(this.width * this.height)].map((_, i) => {
             const field = this.field_generator(this, i % this.width, Math.trunc(i / this.width));
-            if (field.objects) field.objects.forEach((object) => this.add_object(object));
             return field;
         });
+    }
+
+    public get_map_boundries(): Rect {
+        return Rect.from_boundries(0, 0, this.width - 1, this.height - 1);
     }
 
     public at(pos: Point): Field | null {
@@ -41,24 +45,12 @@ export default class WorldMap<TerrainTypeID> {
         return this.fields[id];
     }
 
-    public get_map_boundries(): Rect {
-        return Rect.from_boundries(0, 0, this.width - 1, this.height - 1);
+    public update(delta_seconds: number): Task[] {
+        return this.map_fields_in_rect(this.get_map_boundries(), (field) => {
+            return field.objects.flatMap((object): Task[] => { return object.update(delta_seconds) });
+        }).flatMap((tasks: Task[]) => tasks);
     }
 
-    public add_object(object: MapObject) {
-        this.update_field_at_point(object.get_position(), { objects: [object] });
-        object.on_before_position_change.add((is_allowed: boolean, event: { old: Field, new: Field }): boolean => {
-            const target_field = event.new;
-            if (!target_field) return false;
-            const has_touched_something = target_field.objects.reduce((result, object) => !!(object.touched_by(object)), true);
-            if (has_touched_something) return false;
-            return is_allowed;
-        });
-        object.on_destroy.add(() => {
-            this.update_field_at_point(object.get_position(), { objects: [] });
-        });
-        this.events.connect(object);
-    }
 
     public update_field_at_point(pos: Point, field: Partial<Field>) {
         if (this.get_map_boundries().is_containing(pos)) {
@@ -67,45 +59,38 @@ export default class WorldMap<TerrainTypeID> {
         }
     }
 
-    public map_fields_in_rect(rect: Rect, callback: FieldCallback): Array<Field> {
+    public map_fields_in_rect<R>(rect: Rect, callback: (field: Field) => R): Array<R> {
         const safe_rect = this.get_map_boundries().get_intersection(rect);
         if (!safe_rect) return [];
         const fields = safe_rect.map_points_in_rect(pos => this.fields[pos.x + pos.y * this.width]);
         return fields.map(callback);
     }
 
-    public effect(pos: Point) {
-        const field = this.at(pos);
-        if (field) {
-            this.on_effect.trigger_event(field);
-        }
+    public get_fields_in_rect(rect: Rect): ReadonlyArray<Field> {
+        const safe_rect = this.get_map_boundries().get_intersection(rect);
+        if (!safe_rect) return [];
+        return safe_rect.map_points_in_rect(pos => this.fields[pos.x + pos.y * this.width]);
     }
 
-    public static factory<TerrainTypeID>() {
-        return (width: number, height: number) =>
-            (field_generator: FieldGenerator<TerrainTypeID>) => {
-                return new WorldMap(width, height, field_generator);
-            };
-    }
 
 }
 
 class WorldEventDelegator {
-    public readonly on_destroy: ListenerSocket<ObjectDestroyedEvent> = new ListenerSocket();
-    public readonly on_touched: ListenerSocket<ObjectTouchedEvent> = new ListenerSocket();
-    public readonly on_touches: ListenerSocket<ObjectTouchesEvent> = new ListenerSocket();
-    public readonly on_damaged: ListenerSocket<ObjectDamagedEvent> = new ListenerSocket();
-    public readonly on_attack: ListenerSocket<ObjectAttacksEvent> = new ListenerSocket();
-    public readonly on_effect: ListenerSocket<Field> = new ListenerSocket();
+    // public readonly on_destroy: ListenerSocket<ObjectDestroyedEvent> = new ListenerSocket();
+    // public readonly on_touched: ListenerSocket<ObjectTouchedEvent> = new ListenerSocket();
+    // public readonly on_touches: ListenerSocket<ObjectTouchesEvent> = new ListenerSocket();
+    // public readonly on_damaged: ListenerSocket<ObjectDamagedEvent> = new ListenerSocket();
+    // public readonly on_attack: ListenerSocket<ObjectAttacksEvent> = new ListenerSocket();
+    // public readonly on_effect: ListenerSocket<Field> = new ListenerSocket();
 
     public constructor(map: WorldMap<TerrainTypeID>) {
-        map.on_effect.add((event) => this.on_effect.trigger_event(event));
+        // map.on_effect.add((event) => this.on_effect.trigger_event(event));
     }
 
     public connect(object: MapObject) {
-        object.on_destroy.add((event: ObjectDestroyedEvent) => this.on_destroy.trigger_event(event));
-        object.on_touched_by.add((event: ObjectTouchedEvent) => this.on_touched.trigger_event(event));
-        object.on_damaged_by.add((event: ObjectDamagedEvent) => this.on_damaged.trigger_event(event));
-        object.on_attack.add((event: ObjectAttacksEvent) => this.on_attack.trigger_event(event));
+        // object.on_destroy.add((event: ObjectDestroyedEvent) => this.on_destroy.trigger_event(event));
+        // object.on_touched_by.add((event: ObjectTouchedEvent) => this.on_touched.trigger_event(event));
+        // object.on_damaged_by.add((event: ObjectDamagedEvent) => this.on_damaged.trigger_event(event));
+        // object.on_attack.add((event: ObjectAttacksEvent) => this.on_attack.trigger_event(event));
     }
 }

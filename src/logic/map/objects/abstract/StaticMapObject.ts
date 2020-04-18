@@ -1,7 +1,7 @@
-import MapObject from "./MapObject";
+// import MapObject from "./MapObject";
 
-export default class StaticMapObject extends MapObject {
-    public touched_by(object: MapObject): this {
-        return this;
-    }
-}
+// export default class StaticMapObject extends MapObject {
+//     public touched_by(object: MapObject): this {
+//         return this;
+//     }
+// }

@@ -1,6 +1,5 @@
 import MapObjectComponent from "./MapObjectComponent";
 import MapObject from "../abstract/MapObject";
-import CollectableMapObject from "../abstract/CollectableMapObject";
 
 export default class InventarComponent extends MapObjectComponent {
     public static NAME = "inventar";
@@ -11,12 +10,12 @@ export default class InventarComponent extends MapObjectComponent {
 
     public constructor(object: MapObject) {
         super(InventarComponent.NAME);
-        object.on_position_change.add((event) => {
-            // if (this.holding) {
-            //     event.old.object = this.holding;
-            //     this.holding = null;
-            // }
-        });
+        // object.on_position_change.add((event) => {
+        //     // if (this.holding) {
+        //     //     event.old.object = this.holding;
+        //     //     this.holding = null;
+        //     // }
+        // });
     }
 
     public has(item: string) {

@@ -1,5 +1,6 @@
+import { Task } from "../../../flow/Task";
 
-export default class ComponentContainer<COMPONENT extends { name: string, update: (dt: number) => void }> {
+export default class ComponentContainer<COMPONENT extends { name: string, update: (dt: number) => Task[] }> {
     private components: Map<string, COMPONENT> = new Map();
 
     constructor() {
@@ -16,12 +17,18 @@ export default class ComponentContainer<COMPONENT extends { name: string, update
     }
 
     public get<TARGET extends COMPONENT>(component_class: { new(...x: any): TARGET, NAME: string }): TARGET | undefined {
-        return this.components.get(component_class.NAME) as TARGET;
+        return this.components.get(component_class.NAME) as TARGET | undefined;
     }
 
-    public update(delta_seconds: number) {
+    public update(delta_seconds: number): Task[] {
+        let tasks: Task[] = [];
         this.components.forEach((component) => {
-            component.update(delta_seconds);
+            tasks.push(...component.update(delta_seconds));
         });
+        return tasks;
+    }
+
+    public each(callback: (component: COMPONENT) => void) {
+        this.components.forEach(callback);
     }
 }

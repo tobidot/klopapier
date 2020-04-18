@@ -1,9 +1,6 @@
 import ImageManager from "../manager/ImageManager";
-import { image_resources } from "../assets/ImageResources";
-import { RectSize, Rect } from "../ts_library/space/SimpleShapes";
+import { Rect } from "../ts_library/space/SimpleShapes";
 import MapObject from "../logic/map/objects/abstract/MapObject";
-import HungerComponent from "../logic/map/objects/components/HungerComponent";
-import LivingMapObject from "../logic/map/objects/abstract/LivingMapObject";
 
 export default class LifeOnScreen {
     private context: CanvasRenderingContext2D;
@@ -17,18 +14,17 @@ export default class LifeOnScreen {
     }
 
     display(object: MapObject) {
-        if (!(object instanceof LivingMapObject)) return;
-        const bar_width = this.display_rect.width();
-        const percentage = (object.get_health_percentage());
+        // const bar_width = this.display_rect.width();
+        // const percentage = (object.get_health_percentage());
 
-        this.context.font = "32px sans-serif";
+        // this.context.font = "32px sans-serif";
 
-        this.context.fillStyle = "gray";
-        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width, this.display_rect.height());
-        this.context.fillStyle = "red";
-        this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width * percentage, this.display_rect.height());
-        this.context.fillStyle = "black";
-        this.context.fillText('Health', Math.max(10, percentage * bar_width - 130), this.display_rect.top + this.display_rect.height() / 2 + 12);
+        // this.context.fillStyle = "gray";
+        // this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width, this.display_rect.height());
+        // this.context.fillStyle = "red";
+        // this.context.fillRect(this.display_rect.left, this.display_rect.top, bar_width * percentage, this.display_rect.height());
+        // this.context.fillStyle = "black";
+        // this.context.fillText('Health', Math.max(10, percentage * bar_width - 130), this.display_rect.top + this.display_rect.height() / 2 + 12);
 
     }
 }

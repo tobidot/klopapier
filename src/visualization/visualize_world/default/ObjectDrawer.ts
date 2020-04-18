@@ -1,13 +1,13 @@
 import { VisualFieldData } from "./FieldDrawer";
 import ImageManager from "../../../manager/ImageManager";
-import Field from "../../../logic/map/Field";
-import MovingMapObject from "../../../logic/map/objects/abstract/MovingMapObject";
+import Field from "../../../logic/map/Field";;
 import { Point } from "../../../ts_library/space/SimpleShapes";
 import { direction_to_point } from "../../../ts_library/conversion/fromDirection";
 import { ImageID } from "../../../assets/ImageResources";
 import MapObject from "../../../logic/map/objects/abstract/MapObject";
 import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
+import MovingComponent from "../../../logic/map/objects/components/MovingComponent";
 
 
 
@@ -21,18 +21,19 @@ export class ObjectDrawer extends FieldPartDrawer {
         let object_image_id = ObjectDrawer.get_image_for_object_type(field.objects[field.objects.length - 1]);
         if (object_image_id !== null) {
             let object_image = this.images.get(object_image_id);
-            if (field.objects instanceof MovingMapObject && field.objects.moving_progress !== false) {
-                const offset: Point = direction_to_point(field.objects.comming_from_direction, field.objects.moving_progress * 32);
-                draw(object_image, offset);
-            } else {
-                draw(object_image);
-            }
+            // if (field.objects instanceof MovingMapObject && field.objects.moving_progress !== false) {
+            //     const offset: Point = direction_to_point(field.objects.comming_from_direction, field.objects.moving_progress * 32);
+            //     draw(object_image, offset);
+            // } else {
+            draw(object_image);
+            // }
         }
     }
 
 
     public static get_image_for_object_type(object: MapObject | null): ImageID | null {
         if (!object) return null;
+        const moving_component = object.get(MovingComponent);
         switch (object.type) {
             case MapObjectTypeID.PAPER_ROLL:
                 return ImageID.OBJECT__PAPER_ROLL;
@@ -47,9 +48,10 @@ export class ObjectDrawer extends FieldPartDrawer {
             case MapObjectTypeID.VIRUS:
                 return ImageID.UNIT__VIRUS;
             case MapObjectTypeID.PLAYER:
-                if (object instanceof MovingMapObject) {
-                    return [ImageID.UNIT__SMILEY_LEFT, ImageID.UNIT__SMILEY_UP, ImageID.UNIT__SMILEY_RIGHT, ImageID.UNIT__SMILEY_DOWN][object.look_direction];
+                if (moving_component) {
+                    return [ImageID.UNIT__SMILEY_LEFT, ImageID.UNIT__SMILEY_UP, ImageID.UNIT__SMILEY_RIGHT, ImageID.UNIT__SMILEY_DOWN][moving_component.look_direction];
                 }
+                return ImageID.UNIT__SMILEY_DOWN;
             default:
                 console.error('No Image found for Object ' + object.type);
                 return null;

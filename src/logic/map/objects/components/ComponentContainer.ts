@@ -31,4 +31,8 @@ export default class ComponentContainer<COMPONENT extends { name: string, update
     public each(callback: (component: COMPONENT) => void) {
         this.components.forEach(callback);
     }
+
+    public get_all(): Array<COMPONENT> {
+        return [...this.components.values()];
+    }
 }

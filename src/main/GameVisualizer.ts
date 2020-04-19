@@ -65,7 +65,7 @@ export default class GameVisualizer {
         //this.context.fillRect(650, 500, 150, 100);
         this.daytime.display(game_state.time_of_day / 24, game_state.day);
         // this.visualizers.life.display(this.object);
-        //this.visualizers.fps_counter(this.fps_counter.get_current_fps());
+        this.fps_counter(game_state.calculated.fps);
         //this.visualizers.infection.display(this.infection_count);
 
 

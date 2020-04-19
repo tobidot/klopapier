@@ -19,8 +19,8 @@ import { GameState } from "../../../../main/GameState";
 export type ObjectID = number;
 
 export default abstract class MapObject extends ComponentContainer<MapObjectComponent>{
-    public static next_instance_ID: ObjectID;
-    public readonly instance_ID: number = MapObject.next_instance_ID++;
+    public static next_instance_ID: ObjectID = 0;
+    public readonly instance_ID: ObjectID = MapObject.next_instance_ID++;
     public readonly type: MapObjectTypeID;
     // public readonly on_position_change: ValueChangeListenerSocket<Field>;
     // public readonly on_before_position_change: ValueChangeFilterSocket<Field>;
@@ -99,8 +99,8 @@ export default abstract class MapObject extends ComponentContainer<MapObjectComp
         return this._is_destroyed;
     }
 
-    public handle(event: MapEvent) {
-        //super.each((component) => { component.handle(event); });
+    public handle(game_state: GameState, task: Task): GameState {
+        return super.get_all().reduce((game_state, component) => { return component.handle(game_state, task, this); }, game_state);
     }
 
     public update(delta_seconds: number): Task[] {

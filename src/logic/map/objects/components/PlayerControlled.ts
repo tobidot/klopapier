@@ -4,6 +4,7 @@ import MapObject from "../abstract/MapObject";
 import { Task } from "../../../flow/Task";
 import { create_timed_array_elements } from "../../../../ts_library/utility/Timed";
 import { PositionComponent } from "./PositionComponent";
+import { MoveObjectTask } from "../../../flow/tasks/MoveObjectTask";
 
 export default class PlayerControlledComponent extends MapObjectComponent {
     public static NAME = "player_controlled";
@@ -18,12 +19,11 @@ export default class PlayerControlledComponent extends MapObjectComponent {
         if (!position) return [];
         let tasks: Task[] = [];
         tasks = this.every_second(delta_seconds).map(() => {
-            return {
-                task: "move_object",
-                source: position.position,
-                object: self,
-                target: position.position.add({ x: 1, y: 0 }),
-            }
+            return new MoveObjectTask(
+                position.position,
+                position.position.add({ x: 1, y: 0 }),
+                self.instance_ID,
+            )
         });
         return tasks;
 

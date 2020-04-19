@@ -2,7 +2,7 @@ import MapObjectComponent from "./MapObjectComponent";
 import MapObject, { ObjectID } from "../abstract/MapObject";
 import { Task } from "../../../flow/Task";
 import { create_timed_array_elements } from "../../../../ts_library/utility/Timed";
-import { DamageObject } from "../../../flow/tasks/DamageObject";
+import DamageObjectTask from "../../../flow/tasks/DamageObjectTask";
 
 export default class HungerComponent extends MapObjectComponent {
     public static NAME = "hunger";
@@ -19,12 +19,8 @@ export default class HungerComponent extends MapObjectComponent {
     public update(delta_seconds: number): Task[] {
         this.urge_to_eat = Math.min(this.urge_to_eat + delta_seconds * 2, 100);
         let tasks: Task[] = [];
-        return this.every_second(delta_seconds).map((): DamageObject => {
-            return {
-                task: "damage_object",
-                target_id: this.object_id,
-                amount: 10,
-            }
+        return this.every_second(delta_seconds).map((): DamageObjectTask => {
+            return new DamageObjectTask(this.object_id, 10);
         });
     }
 }

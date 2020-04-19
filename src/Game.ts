@@ -7,7 +7,7 @@ import Virus from "./logic/map/objects/Virus";
 import Nudel from "./logic/map/objects/Nudel";
 import Spray from "./logic/map/objects/Spray";
 import { Task } from "./logic/flow/Task";
-import { GameState } from "./main/GameState";
+import { GameState, GameCalculatedState } from "./main/GameState";
 import { GameMode } from "./main/GameMode";
 import CreateMap from "./logic/map/helper/CreateMap";
 import GameInputHandler from "./main/GameInputHandler";
@@ -15,7 +15,6 @@ import GameVisualizer from "./main/GameVisualizer";
 import GameLevels from "./main/GameLevels";
 import { InputDelegator } from "./logic/user_input/Input";
 import System from "./logic/system/System";
-import { set_camera_position, SetCameraPosition } from "./logic/flow/tasks/SetCameraPosition";
 import UpdateMapSystem from "./logic/system/UpdateMap";
 import TaskHandleSystem from "./logic/system/TaskHandleSystem";
 
@@ -74,6 +73,7 @@ export default class Game {
             calculated: {
                 has_lost: false,
                 has_won: false,
+                fps: 0,
             },
         }
 
@@ -220,7 +220,7 @@ export default class Game {
         this.game_state = this.systems.reduce((game_state, system) => {
             return system.update(delta_seconds, this.game_state);
         }, this.game_state);
-
+        this.game_state.calculated = this.update_calculated_game_state(this.game_state);
 
         // if (!this.has_won && this.objects.filter((object) => object instanceof Virus).length === 0) {
         //     this.has_won = true;
@@ -236,6 +236,13 @@ export default class Game {
     }
 
 
+    private update_calculated_game_state(game_state: GameState): GameCalculatedState {
+        return {
+            has_won: false,
+            has_lost: false,
+            fps: this.fps_counter.get_current_fps(),
+        };
+    }
 
     public create_object(object_constructor: CreateableObjectTypes, pos: Point) {
         // this.to_add_objects.push(new object_constructor(this.world_map, pos));

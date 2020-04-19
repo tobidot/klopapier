@@ -2,8 +2,8 @@ import System from "./System";
 import { GameState } from "../../main/GameState";
 import Game from "../../Game";
 import { Task } from "../flow/Task";
-import { set_camera_position, SetCameraPosition } from "../flow/tasks/SetCameraPosition";
-import { do_task_move_object, MoveObjectTask } from "../flow/tasks/MoveObject";
+import { SetCameraPositionTask } from "../flow/tasks/SetCameraPositionTask";
+import { MoveObjectTask } from "../flow/tasks/MoveObjectTask";
 
 export default class TaskHandleSystem extends System {
 
@@ -17,16 +17,12 @@ export default class TaskHandleSystem extends System {
     }
 
     private handle(task: Task, game_state: GameState): GameState {
-        switch (task.task) {
-            case "move_object":
-                return do_task_move_object(game_state, task as MoveObjectTask);
-                break;
-            case "set_camera_position":
-                return set_camera_position(game_state, task as SetCameraPosition);
-            default:
-                console.log('unhandled task');
-                break;
-        }
+        game_state = task.execute(game_state);
+        game_state = game_state.world_map.get_fields_in_rect(game_state.world_map.get_map_boundries()).reduce((game_state, field) => {
+            return field.objects.reduce((game_state, object) => {
+                return object.handle(game_state, task);
+            }, game_state);
+        }, game_state);
         return game_state;
     }
 }

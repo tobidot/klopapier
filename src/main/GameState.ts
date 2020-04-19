@@ -21,11 +21,5 @@ export interface GameState {
 export interface GameCalculatedState {
     has_won: boolean;
     has_lost: boolean;
-}
-
-export function update_calculated_flags(): GameCalculatedState {
-    return {
-        has_won: false,
-        has_lost: false,
-    };
+    fps: number;
 }

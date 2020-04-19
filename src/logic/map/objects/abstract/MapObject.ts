@@ -14,6 +14,7 @@ import ComponentContainer from "../components/ComponentContainer";
 import MapObjectComponent from "../components/MapObjectComponent";
 import { MapEvent } from "../../events/MapEvent";
 import { Task } from "../../../flow/Task";
+import { GameState } from "../../../../main/GameState";
 
 export type ObjectID = number;
 
@@ -99,10 +100,10 @@ export default abstract class MapObject extends ComponentContainer<MapObjectComp
     }
 
     public handle(event: MapEvent) {
-        super.each((component) => { component.handle(event); });
+        //super.each((component) => { component.handle(event); });
     }
 
     public update(delta_seconds: number): Task[] {
-        return super.update(delta_seconds);
+        return super.update(delta_seconds, this);
     }
 }

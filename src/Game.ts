@@ -1,25 +1,11 @@
 import ImageManager from "./manager/ImageManager";
 import { Point, Rect } from "./ts_library/space/SimpleShapes";
 import FpsCounter from "./ts_library/utility/FpsCounter";
-import { InputDelegator } from "./logic/user_input/Input";
 import Paperroll from "./logic/map/objects/Klopapier";
 import { image_resources, ImageID } from "./assets/ImageResources";
 import Virus from "./logic/map/objects/Virus";
-import MapObject from "./logic/map/objects/abstract/MapObject";
 import Nudel from "./logic/map/objects/Nudel";
 import Spray from "./logic/map/objects/Spray";
-import MapData, { MapFieldData } from "./logic/data/MapData";
-import { load_mapdata_from_image_array } from "./logic/data/MapDataLoader";
-import { map1 } from "./assets/images/maps/map1";
-import { map2 } from "./assets/images/maps/map2";
-import { map3 } from "./assets/images/maps/map3";
-import { map4 } from "./assets/images/maps/map4";
-import { map5 } from "./assets/images/maps/map5";
-import { map6 } from "./assets/images/maps/map6";
-import { map7 } from "./assets/images/maps/map7";
-import { map8 } from "./assets/images/maps/map8";
-import { map9 } from "./assets/images/maps/map9";
-import { WorldMapVisualizer } from "./visualization/visualize_world/WorldMapVisualizer";
 import { Task } from "./logic/flow/Task";
 import { GameState } from "./main/GameState";
 import { GameMode } from "./main/GameMode";
@@ -27,6 +13,11 @@ import CreateMap from "./logic/map/helper/CreateMap";
 import GameInputHandler from "./main/GameInputHandler";
 import GameVisualizer from "./main/GameVisualizer";
 import GameLevels from "./main/GameLevels";
+import { InputDelegator } from "./logic/user_input/Input";
+import System from "./logic/system/System";
+import { set_camera_position, SetCameraPosition } from "./logic/flow/tasks/SetCameraPosition";
+import UpdateMapSystem from "./logic/system/UpdateMap";
+import TaskHandleSystem from "./logic/system/TaskHandleSystem";
 
 export default class Game {
     // Assets / Targets
@@ -44,30 +35,30 @@ export default class Game {
 
     // 
     private tasks: Array<Task> = [];
+    private systems: Array<System> = [];
     private game_state: GameState;
 
     private level_handler: GameLevels;
     private visualizer: GameVisualizer;
 
     constructor(element: HTMLElement) {
-        // Link with dom
-        let canvas = document.createElement('canvas');
-        canvas.width = 800;
-        canvas.height = 600;
-        let context = canvas.getContext('2d');
-        if (!context) throw new Error('Could not create canvas context');
-        this.context = context;
-        element.innerHTML = '';
-        element.appendChild(canvas);
+        this.context = this.setup_dom_context(element);
         this.input_delegator = new InputDelegator(element);
         //
 
         // add visual representives        
         this.images = this.construct_image_manager();
         this.images.on_progress_listener.add(([progress, image]) => {
-            this.context.drawImage(image, canvas.width / 2 - image.width / 2, canvas.height / 2 - image.height / 2);
+            const height = Math.min(image.height, this.context.canvas.height / 2);
+            const width = image.width / image.height * height;
+            this.context.drawImage(image,
+                progress * this.context.canvas.width - width,
+                this.context.canvas.height / 2 - height / 2,
+                width, height);
         });
-        // load levels
+
+
+        // load levels 
         this.level_handler = new GameLevels();
 
 
@@ -79,10 +70,11 @@ export default class Game {
             day: 0,
             modus: GameMode.INITIAL,
 
+            tasks: [],
             calculated: {
                 has_lost: false,
                 has_won: false,
-            }
+            },
         }
 
 
@@ -92,6 +84,23 @@ export default class Game {
         // Visualizer
         this.visualizer = new GameVisualizer(this.context, this.images);
 
+
+        this.systems = [
+            new UpdateMapSystem(),
+            new TaskHandleSystem(),
+        ]
+    }
+
+    private setup_dom_context(element: HTMLElement): CanvasRenderingContext2D {
+        // Link with dom
+        let canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 600;
+        element.innerHTML = '';
+        element.appendChild(canvas);
+        let context = canvas.getContext('2d');
+        if (!context) throw new Error('Could not create canvas context');
+        return this.context = context;
     }
 
     private reset_level() {
@@ -110,32 +119,11 @@ export default class Game {
     }
 
     async start() {
-        const level_container = document.getElementById('levels');
-        if (!level_container) throw new Error('Could not find level container.');
 
         await this.images.wait_until_loaded();
         // this.levels = map_images.map(load_mapdata_from_image);
         this.reset_level();
 
-
-        const map_images = [
-            this.images.get(ImageID.MAPS__MAP1),
-            this.images.get(ImageID.MAPS__MAP2),
-            this.images.get(ImageID.MAPS__MAP3),
-            this.images.get(ImageID.MAPS__MAP4),
-            this.images.get(ImageID.MAPS__MAP5),
-            this.images.get(ImageID.MAPS__MAP6),
-            this.images.get(ImageID.MAPS__MAP7),
-            this.images.get(ImageID.MAPS__MAP8),
-            this.images.get(ImageID.MAPS__MAP9),
-        ];
-        map_images.forEach((image, index) => {
-            level_container.appendChild(image);
-            image.addEventListener('click', () => {
-                this.level_handler.select(index);
-                this.reset_level();
-            });
-        });
 
         setInterval(() => {
             this.fps_counter.update();
@@ -229,9 +217,9 @@ export default class Game {
         //     this.fires = [...new Set(this.fires)];
         // }
 
-
-        this.tasks.forEach((task) => this.handle(task));
-        this.tasks = [];
+        this.game_state = this.systems.reduce((game_state, system) => {
+            return system.update(delta_seconds, this.game_state);
+        }, this.game_state);
 
 
         // if (!this.has_won && this.objects.filter((object) => object instanceof Virus).length === 0) {
@@ -247,16 +235,6 @@ export default class Game {
         this.visualizer.display(delta_seconds, this.game_state);
     }
 
-    private handle(task: Task) {
-        switch (task.name) {
-            case "move_object":
-                console.log('move object');
-                break;
-            default:
-                console.log('unhandled task');
-                break;
-        }
-    }
 
 
     public create_object(object_constructor: CreateableObjectTypes, pos: Point) {

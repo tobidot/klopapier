@@ -3,6 +3,7 @@ import { TerrainTypeID } from "../assets/TerrainResources";
 import { Point } from "../ts_library/space/SimpleShapes";
 import MapObject from "../logic/map/objects/abstract/MapObject";
 import { GameMode } from "./GameMode";
+import { Task } from "../logic/flow/Task";
 
 export interface GameState {
     modus: GameMode;
@@ -13,6 +14,8 @@ export interface GameState {
     time_of_day: number;
     camera_position: Point;
     current_level: number;
+
+    tasks: Task[];
 }
 
 export interface GameCalculatedState {

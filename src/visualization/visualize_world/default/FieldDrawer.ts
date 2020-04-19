@@ -43,9 +43,9 @@ export default class FieldDrawer {
             return (field: Field) => {
                 const data = this.get_visual_data_for_field(field);
                 this.next_field_screen_position = field.location
-                    .sub(non_distorted_camera.map_source_rect.top_left())
+                    .sub(non_distorted_camera.map_source_rect.left_top())
                     .mul(this.next_field_pixel_size)
-                    .add(non_distorted_camera.display_target_rect.top_left());
+                    .add(non_distorted_camera.display_target_rect.left_top());
                 part_drawer.draw(this.draw_part_field_function, field, data);
             }
         });

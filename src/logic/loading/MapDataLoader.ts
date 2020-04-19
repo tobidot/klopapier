@@ -6,6 +6,7 @@ import Wall from "../map/objects/Wall";
 import Virus from "../map/objects/Virus";
 import Paperroll from "../map/objects/Klopapier";
 import Nudel from "../map/objects/Nudel";
+import Agent from "../map/objects/Agent";
 
 export function load_mapdata_from_image(image: HTMLImageElement): MapData {
     const canvas = new OffscreenCanvas(image.width, image.height);
@@ -15,14 +16,7 @@ export function load_mapdata_from_image(image: HTMLImageElement): MapData {
     ctx.drawImage(image, 0, 0, image.width, image.height);
     const imgdata = ctx.getImageData(0, 0, image.width, image.height);
     const imgdata_as_32bit = new Uint32Array(imgdata.data.buffer);
-    let [player_x, player_y] = imgdata_as_32bit.reduce((pos: [number, number], color: number, index: number) => {
-        if (color === Colors.CYAN || color === Colors.DARK_CYAN) {
-            let new_pos: [number, number] = [index % image.width, Math.floor(index / image.width)];
-            return new_pos;
-        }
-        return pos;
-    }, [Math.floor(image.width / 2), Math.floor(image.height / 2)]);
-    let mapdata = new MapData(image.width, image.height, player_x, player_y);
+    let mapdata = new MapData(image.width, image.height);
     imgdata_as_32bit.forEach((color: number, index: number) => {
         const x = index % imgdata.width;
         const y = Math.trunc(index / imgdata.width);
@@ -34,14 +28,7 @@ export function load_mapdata_from_image(image: HTMLImageElement): MapData {
 
 
 export function load_mapdata_from_image_array(width: number, height: number, data: number[]): MapData {
-    let [player_x, player_y] = data.reduce((pos: [number, number], color: number, index: number) => {
-        if (color === Colors.CYAN || color === Colors.DARK_CYAN) {
-            let new_pos: [number, number] = [index % width, Math.floor(index / width)];
-            return new_pos;
-        }
-        return pos;
-    }, [Math.floor(width / 2), Math.floor(height / 2)]);
-    let mapdata = new MapData(width, height, player_x, player_y);
+    let mapdata = new MapData(width, height);
     data.forEach((color: number, index: number) => {
         const x = index % width;
         const y = Math.trunc(index / width);
@@ -72,9 +59,11 @@ export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
 
         case Colors.CYAN: return { // Player
             terrain: TerrainTypeID.OUTDOOR_GRAS,
+            object: Agent,
         };
         case Colors.DARK_CYAN: return { // Player
             terrain: TerrainTypeID.INDOOR_SHOP,
+            object: Agent,
         };
 
         case Colors.RED: return {

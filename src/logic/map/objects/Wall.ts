@@ -6,7 +6,7 @@ import MapObject from "./abstract/MapObject";
 import { PositionComponent } from "./components/PositionComponent";
 
 export default class Wall extends MapObject {
-    constructor(map: WorldMap<TerrainTypeID>, pos: Point) {
+    constructor() {
         super(MapObjectTypeID.WALL);
         const position = new PositionComponent();
         this.add(position);

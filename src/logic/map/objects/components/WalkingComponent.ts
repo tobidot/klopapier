@@ -2,9 +2,8 @@ import MapObjectComponent from "./MapObjectComponent";
 import MapObject from "../abstract/MapObject";
 import WorldMap from "../../WorldMap";
 import { TerrainTypeID } from "../../../../assets/TerrainResources";
-import { Direction } from "../../../../ts_library/space/Direction";
-import { Point } from "../../../../ts_library/space/SimpleShapes";
 import { Task } from "../../../flow/Task";
+import { create_timed_array_elements } from "../../../../ts_library/utility/Timed";
 
 export default class WalkingComponent extends MapObjectComponent {
     public static NAME = "walking";

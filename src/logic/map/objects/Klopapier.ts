@@ -5,7 +5,7 @@ import { TerrainTypeID } from "../../../assets/TerrainResources";
 import MapObject from "./abstract/MapObject";
 
 export default class Paperroll extends MapObject {
-    constructor(map: WorldMap<TerrainTypeID>, pos: Point) {
+    constructor() {
         super(MapObjectTypeID.PAPER_ROLL);
     }
 }

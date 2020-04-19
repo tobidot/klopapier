@@ -58,6 +58,10 @@ export class Point implements IPoint {
         return this;
     }
 
+    public copy(): Point {
+        return new Point(this.x, this.y);
+    }
+
     public map(fn: (value: number) => number) {
         return new Point(fn(this.x), fn(this.y));
     }
@@ -105,10 +109,10 @@ export class Rect implements IRect {
         this.bottom = Math.max(top, bottom);;
     }
 
-    public top_left(): Point { return new Point(this.top, this.left); }
-    public top_right(): Point { return new Point(this.top, this.right); }
-    public bottom_left(): Point { return new Point(this.bottom, this.left); }
-    public bottom_right(): Point { return new Point(this.bottom, this.right); }
+    public left_top(): Point { return new Point(this.left, this.top); }
+    public right_top(): Point { return new Point(this.right, this.top); }
+    public left_bottom(): Point { return new Point(this.left, this.bottom); }
+    public right_bottom(): Point { return new Point(this.right, this.bottom); }
 
     public width(): number {
         return this.right - this.left;

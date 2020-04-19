@@ -7,6 +7,8 @@ import { callbackify } from "util";
 import { ListenerSocket } from "../../ts_library/ui/Listener";
 import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectTouchedEvent, ObjectDamagedEvent, ObjectTouchesEvent } from "./Events";
 import { Task } from "../flow/Task";
+import { GameState } from "../../main/GameState";
+import { PositionComponent } from "./objects/components/PositionComponent";
 
 export type FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => Field;
 // export type TerrainTypeMap = Map<TerrainTypeID, TerrainType>;
@@ -47,7 +49,12 @@ export default class WorldMap<TerrainTypeID> {
 
     public update(delta_seconds: number): Task[] {
         return this.map_fields_in_rect(this.get_map_boundries(), (field) => {
-            return field.objects.flatMap((object): Task[] => { return object.update(delta_seconds) });
+            return field.objects.flatMap((object): Task[] => {
+                // Own System?
+                const position = object.get(PositionComponent);
+                if (position) position.position = field.location.copy();
+                return object.update(delta_seconds);
+            });
         }).flatMap((tasks: Task[]) => tasks);
     }
 

@@ -1,4 +1,4 @@
-import MapData from "../../data/MapData";
+import MapData from "../../loading/MapData";
 import WorldMap, { FieldGenerator } from "../WorldMap";
 import { TerrainTypeID } from "../../../assets/TerrainResources";
 import Terrain from "../Terrain";
@@ -8,7 +8,7 @@ import Field from "../Field";
 export default class CreateMap {
     public map_data: MapData;
     constructor() {
-        this.map_data = new MapData(5, 5, 1, 1);
+        this.map_data = new MapData(5, 5);
     }
 
     public build(map_data?: MapData): WorldMap<TerrainTypeID> {
@@ -30,7 +30,7 @@ export default class CreateMap {
         };
         let objects = [];
         if (field_data.object) {
-            objects.push(new field_data.object(map, new Point(x, y)));
+            objects.push(new field_data.object());
         }
         const field: Field = { location: new Point(x, y), objects, terrain };
         return field;

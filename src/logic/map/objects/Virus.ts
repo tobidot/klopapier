@@ -9,7 +9,7 @@ import DieOnSprayComponent from "./components/DieOnSprayComponent";
 import InfectedSpreadComponent from "./components/InfectedSpreadComponent";
 
 export default class Virus extends MapObject {
-    constructor(map: WorldMap<TerrainTypeID>, pos: Point) {
+    constructor() {
         super(MapObjectTypeID.VIRUS);
         //         super(MapObjectTypeID.VIRUS, pos, 10);
         //         this.time_to_finish_movement = 0.1;

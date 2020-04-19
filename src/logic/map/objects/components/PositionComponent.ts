@@ -8,4 +8,5 @@ export class PositionComponent extends MapObjectComponent {
     constructor() {
         super(PositionComponent.NAME);
     }
+
 }

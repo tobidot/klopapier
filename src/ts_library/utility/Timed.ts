@@ -1,4 +1,4 @@
-function create_timed_function(interval_in_seconds: number, callback: () => void) {
+export function create_timed_function(interval_in_seconds: number, callback: () => void) {
     let seconds_until_trigger = interval_in_seconds;
     return (delta_seconds: number) => {
         seconds_until_trigger -= delta_seconds;
@@ -9,7 +9,7 @@ function create_timed_function(interval_in_seconds: number, callback: () => void
     };
 }
 
-function create_timed_boolean(interval_in_seconds: number) {
+export function create_timed_boolean(interval_in_seconds: number) {
     let seconds_until_trigger = interval_in_seconds;
     return (delta_seconds: number) => {
         seconds_until_trigger -= delta_seconds;
@@ -21,7 +21,7 @@ function create_timed_boolean(interval_in_seconds: number) {
     };
 }
 
-function create_timed_array(interval_in_seconds: number) {
+export function create_timed_array(interval_in_seconds: number) {
     let counter: number = 0;
     let seconds_until_trigger = interval_in_seconds;
     let array = new Array<number>();
@@ -35,7 +35,7 @@ function create_timed_array(interval_in_seconds: number) {
     };
 }
 
-function create_timed_array_elements(interval_in_seconds: number) {
+export function create_timed_array_elements(interval_in_seconds: number) {
     let seconds_until_trigger = interval_in_seconds;
     return (delta_seconds: number) => {
         let array = new Array<number>();

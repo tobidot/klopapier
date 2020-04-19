@@ -1,3 +1,3 @@
 export interface Task {
-    name: string;
+    task: string;
 }

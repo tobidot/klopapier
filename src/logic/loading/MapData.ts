@@ -5,9 +5,10 @@ import Spray from "../map/objects/Spray";
 import Virus from "../map/objects/Virus";
 import Paperroll from "../map/objects/Klopapier";
 import Nudel from "../map/objects/Nudel";
+import Agent from "../map/objects/Agent";
 
 
-type AllowedObjectType = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;
+type AllowedObjectType = typeof Agent | typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;
 export interface MapFieldData {
     terrain: TerrainTypeID,
     object?: AllowedObjectType,
@@ -22,8 +23,6 @@ interface MapDataSnippet {
 export default class MapData {
     public readonly width: number;
     public readonly height: number;
-    public readonly player_x: number;
-    public readonly player_y: number;
     private snippets: MapDataSnippet[] = [];
 
     public data: {
@@ -31,9 +30,7 @@ export default class MapData {
             [row: number]: MapFieldData
         },
     }
-    public constructor(width: number, height: number, x: number, y: number) {
-        this.player_x = x;
-        this.player_y = y;
+    public constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
         this.data = [...new Array(width)].map(() => {

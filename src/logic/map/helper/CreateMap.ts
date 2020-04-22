@@ -1,9 +1,4 @@
-import MapData from "../../loading/MapData";
-import WorldMap, { FieldGenerator } from "../WorldMap";
-import { TerrainTypeID } from "../../../assets/TerrainResources";
-import Terrain from "../Terrain";
-import { Point } from "../../../ts_library/space/SimpleShapes";
-import Field from "../Field";
+import MapData from "../../../loading/MapData"; import WorldMap, { FieldGenerator } from "../WorldMap"; import { TerrainTypeID } from "../../../assets/TerrainResources"; import Terrain from "../Terrain"; import Field from "../Field"; import { Point } from "../../../ts_library/space/SimpleShapes";
 
 export default class CreateMap {
     public map_data: MapData;

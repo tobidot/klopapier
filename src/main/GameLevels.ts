@@ -1,4 +1,3 @@
-import MapData from "../logic/loading/MapData";
 import { map1 } from "../assets/images/maps/map1";
 import { map2 } from "../assets/images/maps/map2";
 import { map3 } from "../assets/images/maps/map3";
@@ -8,9 +7,9 @@ import { map6 } from "../assets/images/maps/map6";
 import { map7 } from "../assets/images/maps/map7";
 import { map8 } from "../assets/images/maps/map8";
 import { map9 } from "../assets/images/maps/map9";
-import { load_mapdata_from_image_array } from "../logic/loading/MapDataLoader";
+import LevelData from "../loading/LevelData";
 import { ImageID } from "../assets/ImageResources";
-import LevelData from "../logic/loading/LevelData";
+import { load_mapdata_from_image_array } from "../loading/MapDataLoader";
 
 type RawMapData = { width: number, height: number, data: number[] };
 

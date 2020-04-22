@@ -1,10 +1,6 @@
-import { InputDelegator } from "../user_input/Input";
-import { Task } from "../flow/Task";
+import System from "./System"; import { Task } from "../tasks/Task"; import { InputDelegator } from "../user_input/Input"; import InputMoveTask from "../tasks/InputMoveTask"; import { GameState } from "../../main/GameState";
 import { Direction } from "../../ts_library/space/Direction";
-import Game from "../../Game";
-import { GameState } from "../../main/GameState";
-import InputMoveTask from "../flow/tasks/InputMoveTask";
-import System from "./System";
+
 
 export default class InputHandlingSystem extends System {
     private tasks: Array<Task>;
@@ -13,7 +9,7 @@ export default class InputHandlingSystem extends System {
         super();
         this.tasks = [];
         input.on_attack_input = this.on_attack;
-        input.on_direction_input = (direction): boolean => {
+        input.on_direction_input = (direction: Direction): boolean => {
             this.tasks.push(new InputMoveTask(direction));
             return true;
         };

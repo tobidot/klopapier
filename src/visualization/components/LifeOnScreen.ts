@@ -1,6 +1,6 @@
 import ImageManager from "../../manager/ImageManager";
 import { Rect } from "../../ts_library/space/SimpleShapes";
-import MapObject from "../../logic/map/objects/abstract/MapObject";
+import MapObject from "../../logic/objects/MapObject";
 
 export default class LifeOnScreen {
     private context: CanvasRenderingContext2D;

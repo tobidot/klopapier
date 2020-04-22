@@ -1,14 +1,4 @@
-import Field from "./Field";
-import Terrain from "./Terrain";
-import { Rect, Point } from "../../ts_library/space/SimpleShapes";
-import { TerrainTypeID } from "../../assets/TerrainResources";
-import MapObject from "./objects/abstract/MapObject";
-import { callbackify } from "util";
-import { ListenerSocket } from "../../ts_library/ui/Listener";
-import { ObjectDestroyedEvent, ObjectAttacksEvent, ObjectTouchedEvent, ObjectDamagedEvent, ObjectTouchesEvent } from "./Events";
-import { Task } from "../flow/Task";
-import { GameState } from "../../main/GameState";
-import { PositionComponent } from "./objects/components/PositionComponent";
+import Field from "./Field"; import { Rect, Point } from "../../ts_library/space/SimpleShapes"; import { Task } from "../tasks/Task"; import { PositionComponent } from "../components/PositionComponent"; import { TerrainTypeID } from "../../assets/TerrainResources"; import MapObject from "../objects/MapObject";
 
 export type FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => Field;
 // export type TerrainTypeMap = Map<TerrainTypeID, TerrainType>;

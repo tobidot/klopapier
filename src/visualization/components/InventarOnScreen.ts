@@ -1,6 +1,6 @@
 import { RectSize, Point } from "../../ts_library/space/SimpleShapes";
-import InventarComponent from "../../logic/map/objects/components/InventarComponent";
-import MapObject from "../../logic/map/objects/abstract/MapObject";
+import InventarComponent from "../../logic/components/InventarComponent";
+import MapObject from "../../logic/objects/MapObject";
 import ImageManager from "../../manager/ImageManager";
 import { ImageID } from "../../assets/ImageResources";
 

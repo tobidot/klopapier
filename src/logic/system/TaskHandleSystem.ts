@@ -1,9 +1,4 @@
-import System from "./System";
-import { GameState } from "../../main/GameState";
-import Game from "../../Game";
-import { Task } from "../flow/Task";
-import { SetCameraPositionTask } from "../flow/tasks/SetCameraPositionTask";
-import { MoveObjectTask } from "../flow/tasks/MoveObjectTask";
+import System from "./System"; import { GameState } from "../../main/GameState"; import { Task } from "../tasks/Task";
 
 export default class TaskHandleSystem extends System {
 

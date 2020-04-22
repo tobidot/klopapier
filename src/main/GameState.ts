@@ -1,9 +1,8 @@
 import WorldMap from "../logic/map/WorldMap";
 import { TerrainTypeID } from "../assets/TerrainResources";
 import { Point } from "../ts_library/space/SimpleShapes";
-import MapObject from "../logic/map/objects/abstract/MapObject";
 import { GameMode } from "./GameMode";
-import { Task } from "../logic/flow/Task";
+import { Task } from "../logic/tasks/Task";
 
 export interface GameState {
     modus: GameMode;

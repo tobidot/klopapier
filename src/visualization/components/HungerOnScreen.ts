@@ -1,8 +1,8 @@
 import ImageManager from "../../manager/ImageManager";
 import { image_resources } from "../../assets/ImageResources";
 import { RectSize, Rect } from "../../ts_library/space/SimpleShapes";
-import MapObject from "../../logic/map/objects/abstract/MapObject";
-import HungerComponent from "../../logic/map/objects/components/HungerComponent";
+import MapObject from "../../logic/objects/MapObject";
+import HungerComponent from "../../logic/components/HungerComponent";
 
 export default class HungerOnScreen {
     private context: CanvasRenderingContext2D;

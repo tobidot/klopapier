@@ -1,6 +1,6 @@
 import Terrain from "./Terrain";
-import MapObject from "./objects/abstract/MapObject";
 import { Point } from "../../ts_library/space/SimpleShapes";
+import MapObject from "../objects/MapObject";
 
 export default interface Field {
     location: Point;

@@ -1,23 +1,4 @@
-import ImageManager from "./manager/ImageManager";
-import { Point, Rect } from "./ts_library/space/SimpleShapes";
-import FpsCounter from "./ts_library/utility/FpsCounter";
-import Paperroll from "./logic/map/objects/Klopapier";
-import { image_resources, ImageID } from "./assets/ImageResources";
-import Virus from "./logic/map/objects/Virus";
-import Nudel from "./logic/map/objects/Nudel";
-import Spray from "./logic/map/objects/Spray";
-import { Task } from "./logic/flow/Task";
-import { GameState, GameCalculatedState } from "./main/GameState";
-import { GameMode } from "./main/GameMode";
-import CreateMap from "./logic/map/helper/CreateMap";
-import GameInputHandler from "./logic/system/InputHandlingSystem";
-import GameVisualizer from "./main/GameVisualizer";
-import GameLevels from "./main/GameLevels";
-import { InputDelegator } from "./logic/user_input/Input";
-import System from "./logic/system/System";
-import UpdateMapSystem from "./logic/system/UpdateMap";
-import TaskHandleSystem from "./logic/system/TaskHandleSystem";
-import InputHandlingSystem from "./logic/system/InputHandlingSystem";
+import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMap"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
 
 export default class Game {
     // Assets / Targets

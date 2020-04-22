@@ -13,8 +13,9 @@ export default class Agent extends MapObject {
         super(MapObjectTypeID.PLAYER);
         this.add(new InventarComponent(this));
         this.add(new HungerComponent(this));
+
+        this.add(new PlayerControlledComponent());
         this.add(new PositionComponent());
         this.add(new FollowWithCameraComponent());
-        this.add(new PlayerControlledComponent());
     }
 }

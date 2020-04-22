@@ -10,13 +10,14 @@ import { Task } from "./logic/flow/Task";
 import { GameState, GameCalculatedState } from "./main/GameState";
 import { GameMode } from "./main/GameMode";
 import CreateMap from "./logic/map/helper/CreateMap";
-import GameInputHandler from "./main/GameInputHandler";
+import GameInputHandler from "./logic/system/InputHandlingSystem";
 import GameVisualizer from "./main/GameVisualizer";
 import GameLevels from "./main/GameLevels";
 import { InputDelegator } from "./logic/user_input/Input";
 import System from "./logic/system/System";
 import UpdateMapSystem from "./logic/system/UpdateMap";
 import TaskHandleSystem from "./logic/system/TaskHandleSystem";
+import InputHandlingSystem from "./logic/system/InputHandlingSystem";
 
 export default class Game {
     // Assets / Targets
@@ -30,7 +31,6 @@ export default class Game {
 
     //private players: Array<Player>;
     private input_delegator: InputDelegator;
-    private input_handler: GameInputHandler;
 
     // 
     private tasks: Array<Task> = [];
@@ -77,10 +77,6 @@ export default class Game {
             },
         }
 
-
-        // Handle Input
-        this.input_handler = new GameInputHandler(this.input_delegator, this.game_state);
-
         // Visualizer
         this.visualizer = new GameVisualizer(this.context, this.images);
 
@@ -88,6 +84,7 @@ export default class Game {
         this.systems = [
             new UpdateMapSystem(),
             new TaskHandleSystem(),
+            new InputHandlingSystem(this.input_delegator),
         ]
     }
 

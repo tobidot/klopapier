@@ -1,18 +1,22 @@
-import { InputDelegator } from "../logic/user_input/Input";
-import { Task } from "../logic/flow/Task";
-import { Direction } from "../ts_library/space/Direction";
-import Game from "../Game";
-import { GameState } from "./GameState";
+import { InputDelegator } from "../user_input/Input";
+import { Task } from "../flow/Task";
+import { Direction } from "../../ts_library/space/Direction";
+import Game from "../../Game";
+import { GameState } from "../../main/GameState";
+import InputMoveTask from "../flow/tasks/InputMoveTask";
+import System from "./System";
 
-export default class GameInputHanlder {
-    private game_state: GameState;
-    private tasks: Task[];
+export default class InputHandlingSystem extends System {
+    private tasks: Array<Task>;
 
-    constructor(input: InputDelegator, game_state: GameState) {
+    constructor(input: InputDelegator) {
+        super();
         this.tasks = [];
-        this.game_state = game_state;
         input.on_attack_input = this.on_attack;
-
+        input.on_direction_input = (direction): boolean => {
+            this.tasks.push(new InputMoveTask(direction));
+            return true;
+        };
 
         input.on_request_menu = () => {
             //if (this.has_won || this.has_lost) this.game_state.current_level++;
@@ -24,8 +28,10 @@ export default class GameInputHanlder {
         }
     }
 
-    public update_game_state(game_state: GameState) {
-        this.game_state = game_state;
+    public update(delta_seconds: number, game_state: GameState): GameState {
+        const next_task = this.get_tasks().shift();
+        if (next_task) game_state.tasks.push(next_task);
+        return game_state;
     }
 
     public get_tasks(): Task[] {

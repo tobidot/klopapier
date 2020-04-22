@@ -1,4 +1,5 @@
 import { Task } from "./Task"; import { Point } from "../../ts_library/space/SimpleShapes"; import MapObject, { ObjectID } from "../objects/MapObject"; import { GameState } from "../../main/GameState"; import Field from "../map/Field";
+import { PositionComponent } from "../components/PositionComponent";
 
 
 export class MoveObjectTask extends Task {
@@ -28,12 +29,19 @@ export class MoveObjectTask extends Task {
         if (!target_field) return game_state;
         const object = field.objects.find(object => object.instance_ID === task.object_id);
         if (!object) return game_state;
-        field.objects = field.objects.filter((object) => { task.object_id === object.instance_ID });
+        field.objects = field.objects.filter((object) => task.object_id !== object.instance_ID);
         target_field.objects.push(object);
         return game_state;
     }
 
     private is_valid_target(object: MapObject, field: Field): boolean {
-        return (field.objects.length === 0);
+        const position = object.get(PositionComponent);
+        if (!position) return (field.objects.length === 0);
+        return field.objects.reduce<boolean>((result: boolean, field_object: MapObject) => {
+            if (!result) return false;
+            const field_object_position = field_object.get(PositionComponent);
+            if (!field_object_position) return false;
+            return !(position.collision_mask & field_object_position.collision_group);
+        }, true);
     }
 }

@@ -4,7 +4,5 @@ import MapObject from "./MapObject"; import { MapObjectTypeID } from "../../asse
 export default class Wall extends MapObject {
     constructor() {
         super(MapObjectTypeID.WALL);
-        const position = new PositionComponent();
-        this.add(position);
     }
 }

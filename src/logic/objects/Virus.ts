@@ -1,9 +1,14 @@
 import MapObject from "./MapObject"; import { MapObjectTypeID } from "../../assets/MapObjectResources";
+import { PositionComponent, CollisionGroups } from "../components/PositionComponent";
 
 
 export default class Virus extends MapObject {
     constructor() {
         super(MapObjectTypeID.VIRUS);
+        let position = new PositionComponent();
+        position.collision_group = CollisionGroups.MOVEABLE;
+        position.collision_mask = CollisionGroups.MOVEABLE | CollisionGroups.INTERACTABLE;
+        this.add(position);
         //         super(MapObjectTypeID.VIRUS, pos, 10);
         //         this.time_to_finish_movement = 0.1;
         //         let walking = new InfectedWalkingComponent(map, this);

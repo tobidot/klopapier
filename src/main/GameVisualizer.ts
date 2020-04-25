@@ -13,6 +13,7 @@ import { GameMode } from "./GameMode"
 import LoosingScreen from "../visualization/screens/LoosingScreen"
 import WinningScreen from "../visualization/screens/WinningScreen"
 import MapObject from "../logic/objects/MapObject"
+import TimeOfDayEffect from "../visualization/effect/TimeOfDayEffect"
 
 export default class GameVisualizer {
     private fps_counter: (print: number) => void;
@@ -21,6 +22,7 @@ export default class GameVisualizer {
     private hunger: HungerOnScreen;
     private life: LifeOnScreen;
     private daytime: DayTimeOnScreen;
+    private daytime_effect: TimeOfDayEffect;
     private infection: InfectionOnScreen;
 
     private loosing_screen: LoosingScreen;
@@ -39,7 +41,8 @@ export default class GameVisualizer {
 
         this.world_map = new WorldMapVisualizerDefault(context, images);
         this.world_map.camera.map_source_rect = Rect.from_boundries(0, 0, 10, 10);
-        this.world_map.camera.display_target_rect = Rect.from_boundries(0, 0, 600, 500);
+        this.world_map.camera.display_target_rect = Rect.from_boundries(0, 0, 650, 500);
+        this.daytime_effect = new TimeOfDayEffect(context, Rect.from_boundries(0, 0, 650, 500));
     }
 
     public display(delta_seconds: number, game_state: GameState) {
@@ -58,6 +61,7 @@ export default class GameVisualizer {
     private display_playing(delta_seconds: number, game_state: GameState) {
         this.world_map.camera.map_source_rect.set_center(game_state.camera_position);
         this.world_map.display(game_state.world_map, delta_seconds);
+        this.daytime_effect.display(delta_seconds, game_state);
 
         if (game_state.selected) {
             const selected = MapObject.get(game_state.selected);

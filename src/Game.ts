@@ -1,5 +1,6 @@
 import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMap"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
 import FollowWithCameraComponent from "./logic/components/FollowWithCameraComponent";
+import TimeOfDaySystem from "./logic/system/TimeOfDay";
 
 export default class Game {
     // Assets / Targets
@@ -65,6 +66,7 @@ export default class Game {
 
 
         this.systems = [
+            new TimeOfDaySystem(),
             new UpdateMapSystem(),
             new TaskHandleSystem(),
             new InputHandlingSystem(this.input_delegator),

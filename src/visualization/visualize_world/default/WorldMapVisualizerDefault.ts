@@ -34,8 +34,8 @@ export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
     }
 
     public display(world_map: WorldMap<TerrainTypeID>, delta_seconds: number) {
-        const target_width = this.camera.display_target_rect.width();
-        const target_height = this.camera.display_target_rect.height();
+        const target_width = this.camera.display_target_rect.right;
+        const target_height = this.camera.display_target_rect.bottom;
         if (Math.abs(target_width - this.offscreen_canvas.width) || Math.abs(target_height - this.offscreen_canvas.height)) {
             this.offscreen_canvas.width = target_width;
             this.offscreen_canvas.height = target_height;
@@ -46,7 +46,11 @@ export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
             world_map.map_fields_in_rect(this.camera.map_source_rect, draw);
         });
 
-        const image_data = this.offscreen_context.getImageData(0, 0, target_width, target_height);
+        const image_data = this.offscreen_context.getImageData(
+            0, 0,
+            target_width,
+            target_height
+        );
         this.context.putImageData(image_data, 0, 0);
     }
 }

@@ -40,7 +40,7 @@ export default class GameVisualizer {
         this.winning_screen = new WinningScreen(context);
 
         this.world_map = new WorldMapVisualizerDefault(context, images);
-        this.world_map.camera.map_source_rect = Rect.from_boundries(0, 0, 10, 10);
+        this.world_map.camera.map_source_rect = Rect.from_boundries(0, 0, 14, 10);
         this.world_map.camera.display_target_rect = Rect.from_boundries(0, 0, 650, 500);
         this.daytime_effect = new TimeOfDayEffect(context, Rect.from_boundries(0, 0, 650, 500));
     }

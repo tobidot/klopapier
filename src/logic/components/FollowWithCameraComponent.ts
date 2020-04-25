@@ -2,11 +2,10 @@ import MapObjectComponent from "./MapObjectComponent"; import { Point } from "..
 
 
 export default class FollowWithCameraComponent extends MapObjectComponent {
-    public static NAME = "follow_with_camera";
     private p: Point = new Point(0, 0);
 
     public constructor() {
-        super(FollowWithCameraComponent.NAME);
+        super();
     }
 
     public update(delta_seconds: number, self: MapObject): Task[] {

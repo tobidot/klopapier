@@ -6,6 +6,6 @@ export default class MovingComponent extends MapObjectComponent {
     public look_direction: Direction = Direction.DOWN;
 
     constructor() {
-        super(MovingComponent.NAME);
+        super();
     }
 }

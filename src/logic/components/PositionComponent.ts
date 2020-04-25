@@ -18,7 +18,7 @@ export class PositionComponent extends MapObjectComponent {
     public collision_group: number = CollisionGroups.UNPASSABLE;
 
     constructor() {
-        super(PositionComponent.NAME);
+        super();
     }
 
     public handle(game_state: GameState, task: Task, self: MapObject): GameState {

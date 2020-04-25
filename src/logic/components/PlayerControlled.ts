@@ -6,7 +6,7 @@ export default class PlayerControlledComponent extends MapObjectComponent {
     private every_second = create_timed_array_elements(1);
 
     constructor() {
-        super(PlayerControlledComponent.NAME);
+        super();
     }
 
     public update(delta_seconds: number, self: MapObject): Task[] {

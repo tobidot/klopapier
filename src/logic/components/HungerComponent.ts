@@ -9,7 +9,7 @@ export default class HungerComponent extends MapObjectComponent {
     public every_second = create_timed_array_elements(1);
 
     public constructor(object: MapObject) {
-        super(HungerComponent.NAME);
+        super();
         this.object_id = object.instance_ID;
     }
 

@@ -10,7 +10,7 @@ export default class WalkingComponent extends MapObjectComponent {
     public every_step = create_timed_array_elements(5);
 
     public constructor(map: WorldMap<TerrainTypeID>, object: MapObject) {
-        super(WalkingComponent.NAME);
+        super();
         this.map = map;
         this.object = object;
     }

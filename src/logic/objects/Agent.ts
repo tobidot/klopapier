@@ -8,7 +8,7 @@ export default class Agent extends MapObject {
         position.collision_group = CollisionGroups.MOVEABLE;
         position.collision_mask = CollisionGroups.MOVEABLE | CollisionGroups.INTERACTABLE;
 
-        this.add(new InventarComponent(this));
+        this.add(new InventarComponent());
         this.add(new HungerComponent(this));
 
         this.add(new PlayerControlledComponent());

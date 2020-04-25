@@ -12,6 +12,7 @@ import { GameState } from "./GameState"
 import { GameMode } from "./GameMode"
 import LoosingScreen from "../visualization/screens/LoosingScreen"
 import WinningScreen from "../visualization/screens/WinningScreen"
+import MapObject from "../logic/objects/MapObject"
 
 export default class GameVisualizer {
     private fps_counter: (print: number) => void;
@@ -58,13 +59,19 @@ export default class GameVisualizer {
         this.world_map.camera.map_source_rect.set_center(game_state.camera_position);
         this.world_map.display(game_state.world_map, delta_seconds);
 
-        // this.visualizers.inventar.display(this.object);
-        // this.visualizers.hunger.display(this.object);
+        if (game_state.selected) {
+            const selected = MapObject.get(game_state.selected);
+            if (selected) {
+                this.inventar.display(selected);
+                // this.visualizers.hunger.display(this.object);
+
+                // this.visualizers.life.display(this.object);
+            }
+        }
 
         // this.context.fillStyle = "gray";
         //this.context.fillRect(650, 500, 150, 100);
         this.daytime.display(game_state.time_of_day / 24, game_state.day);
-        // this.visualizers.life.display(this.object);
         this.fps_counter(game_state.calculated.fps);
         //this.visualizers.infection.display(this.infection_count);
 

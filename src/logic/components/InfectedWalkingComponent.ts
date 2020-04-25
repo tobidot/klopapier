@@ -12,7 +12,7 @@ export default class InfectedWalkingComponent extends MapObjectComponent {
     public chance_to_move = 0.5;
 
     public constructor(map: WorldMap<TerrainTypeID>, object: MapObject) {
-        super(InfectedWalkingComponent.NAME);
+        super();
         this.map = map;
         this.object = object;
     }

@@ -1,4 +1,5 @@
 import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMap"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
+import FollowWithCameraComponent from "./logic/components/FollowWithCameraComponent";
 
 export default class Game {
     // Assets / Targets
@@ -56,6 +57,7 @@ export default class Game {
                 has_won: false,
                 fps: 0,
             },
+            selected: null
         }
 
         // Visualizer
@@ -88,6 +90,14 @@ export default class Game {
         this.game_state.time_of_day = this.level_handler.current().start_day_time;
         this.game_state.world_map = this.creator_map.build(this.level_handler.current().map_data);
 
+        this.game_state.selected = this.game_state.world_map
+            .map_fields_in_rect(
+                this.game_state.world_map.get_map_boundries(),
+                field => field.objects
+            )
+            .flatMap(objects => objects.filter(object => object.get(FollowWithCameraComponent)))
+            .reduce((selected, next) => selected || next)
+            .instance_ID;
         // this.object = new Agent(new Point(map_data.player_x, map_data.player_y));
         // this.game_state.camera_position = this.object.get_position();
     }

@@ -1,5 +1,8 @@
 import MapObject from "./MapObject"; import { MapObjectTypeID } from "../../assets/MapObjectResources";
 import { PositionComponent, CollisionGroups } from "../components/PositionComponent";
+import IsCollectableComponent from "../components/IsCollectableComponent copy";
+import VisualComponent from "../components/VisualComponent";
+import { ImageID } from "../../assets/ImageResources";
 
 export default class Spray extends MapObject {
     constructor() {
@@ -8,5 +11,11 @@ export default class Spray extends MapObject {
         position.collision_group = CollisionGroups.COLLECTABLE;
         position.collision_mask = CollisionGroups.UNPASSABLE;
         this.add(position);
+        const is_collectable = new IsCollectableComponent();
+        this.add(is_collectable);
+        const visual = new VisualComponent();
+        visual.image = ImageID.OBJECT__SPRAY;
+        visual.icon = ImageID.OBJECT__SPRAY;
+        this.add(visual);
     }
 }

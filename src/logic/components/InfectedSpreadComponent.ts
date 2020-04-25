@@ -10,7 +10,7 @@ export default class InfectedSpreadComponent extends MapObjectComponent {
     public last_day = 0;
 
     public constructor(map: WorldMap<TerrainTypeID>, object: MapObject) {
-        super(InfectedSpreadComponent.NAME);
+        super();
         this.map = map;
         this.object = object;
         // this.last_day = InfectedSpreadComponent.game.day;

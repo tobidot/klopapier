@@ -1,8 +1,9 @@
 import { RectSize, Point } from "../../ts_library/space/SimpleShapes";
 import InventarComponent from "../../logic/components/InventarComponent";
-import MapObject from "../../logic/objects/MapObject";
+import MapObject, { ObjectID } from "../../logic/objects/MapObject";
 import ImageManager from "../../manager/ImageManager";
 import { ImageID } from "../../assets/ImageResources";
+import VisualComponent from "../../logic/components/VisualComponent";
 
 export default class InventarOnScreen {
     private images: ImageManager;
@@ -49,14 +50,13 @@ export default class InventarOnScreen {
         this.context.setTransform(1, 0, 0, 1, 0, 0);
     }
 
-    public get_image_for_inventar_item(name: string): HTMLImageElement {
-        switch (name) {
-            case 'paperroll': return this.images.get(ImageID.OBJECT__PAPER_ROLL);
-            case 'paperroll_half': return this.images.get(ImageID.OBJECT__PAPER_ROLL_HALF);
-            case 'paperroll_last': return this.images.get(ImageID.OBJECT__PAPER_ROLL_LAST);
-            case 'spray': return this.images.get(ImageID.OBJECT__SPRAY);
-            case 'nudel': return this.images.get(ImageID.OBJECT__NUDEL4);
-            default: return this.images.get(ImageID.OTHER__ERROR);
-        }
+    public get_image_for_inventar_item(item: ObjectID): HTMLImageElement {
+        const object = MapObject.get(item);
+        if (!object) return this.images.get(ImageID.OTHER__ERROR);
+        const visual_component = object.get(VisualComponent);
+        if (!visual_component) return this.images.get(ImageID.OTHER__ERROR);
+        const image = this.images.get(visual_component.icon);
+        if (!image) return this.images.get(ImageID.OTHER__ERROR);
+        return image;
     }
 }

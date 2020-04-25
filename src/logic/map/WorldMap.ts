@@ -1,4 +1,5 @@
 import Field from "./Field"; import { Rect, Point } from "../../ts_library/space/SimpleShapes"; import { Task } from "../tasks/Task"; import { PositionComponent } from "../components/PositionComponent"; import { TerrainTypeID } from "../../assets/TerrainResources"; import MapObject from "../objects/MapObject";
+import { GameState } from "../../main/GameState";
 
 export type FieldGenerator<TerrainTypeID> = (map: WorldMap<TerrainTypeID>, x: number, y: number) => Field;
 // export type TerrainTypeMap = Map<TerrainTypeID, TerrainType>;
@@ -37,13 +38,13 @@ export default class WorldMap<TerrainTypeID> {
         return this.fields[id];
     }
 
-    public update(delta_seconds: number): Task[] {
+    public update(delta_seconds: number, game_state: GameState): Task[] {
         return this.map_fields_in_rect(this.get_map_boundries(), (field) => {
             return field.objects.flatMap((object): Task[] => {
                 // Own System?
                 const position = object.get(PositionComponent);
                 if (position) position.position = field.location.copy();
-                return object.update(delta_seconds);
+                return object.update(delta_seconds, game_state);
             });
         }).flatMap((tasks: Task[]) => tasks);
     }

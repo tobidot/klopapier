@@ -17,7 +17,7 @@ export default class FpsCounter {
     public update() {
         if (this.steps_until_update-- < 0) {
             const now = performance.now();
-            const time_diff = Math.min(1000, now - this.last_time_stamp);
+            const time_diff = now - this.last_time_stamp;
             const frames_per_ms = this.average_over_x_frames / time_diff;
             this.current_fps = 1000 * frames_per_ms;
             this.steps_until_update = this.average_over_x_frames;

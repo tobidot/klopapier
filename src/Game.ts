@@ -84,9 +84,6 @@ export default class Game {
     }
 
     private reset_level() {
-        // this.objects.map((object) => object.destroy());
-        // this.objects = [];
-
         this.game_state.time_of_day = this.level_handler.current().start_day_time;
         this.game_state.world_map = this.creator_map.build(this.level_handler.current().map_data);
 
@@ -98,8 +95,6 @@ export default class Game {
             .flatMap(objects => objects.filter(object => object.get(FollowWithCameraComponent)))
             .reduce((selected, next) => selected || next)
             .instance_ID;
-        // this.object = new Agent(new Point(map_data.player_x, map_data.player_y));
-        // this.game_state.camera_position = this.object.get_position();
     }
 
     private construct_image_manager(): ImageManager {
@@ -112,12 +107,17 @@ export default class Game {
         // this.levels = map_images.map(load_mapdata_from_image);
         this.reset_level();
 
-
-        setInterval(() => {
+        let last_update = performance.now();
+        const update = (() => {
+            const now = performance.now();
+            const delta_seconds = (now - last_update) / 1000;
             this.fps_counter.update();
-            this.update(1 / this.fps_counter.get_current_fps());
-            this.draw(1 / this.fps_counter.get_current_fps());
-        }, 1000.0 / 60.0);
+            this.update(delta_seconds);
+            this.draw(delta_seconds);
+            requestAnimationFrame(update);
+            last_update = now;
+        });
+        update();
     }
 
     update(delta_seconds: number) {

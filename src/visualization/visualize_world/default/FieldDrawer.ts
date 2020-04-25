@@ -12,7 +12,7 @@ export interface VisualFieldData {
 }
 export default class FieldDrawer {
     public image_manager: ImageManager;
-    public context: CanvasRenderingContext2D;
+    public context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
     public camera: Camera = new Camera();
 
@@ -21,7 +21,7 @@ export default class FieldDrawer {
     private partial_field_drawers: Array<FieldPartDrawer> = [];
 
     constructor(
-        context: CanvasRenderingContext2D,
+        context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
         image_manager: ImageManager) {
         this.context = context;
         this.image_manager = image_manager;

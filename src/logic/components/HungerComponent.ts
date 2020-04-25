@@ -2,7 +2,6 @@ import MapObjectComponent from "./MapObjectComponent"; import MapObject, { Objec
 
 
 export default class HungerComponent extends MapObjectComponent {
-    public static NAME = "hunger";
     public object_id: ObjectID;
     public urge_to_eat: number = 0;
     public ticks_before_damage: number = 0;

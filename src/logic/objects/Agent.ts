@@ -1,4 +1,5 @@
 import MapObject from "./MapObject"; import { MapObjectTypeID } from "../../assets/MapObjectResources"; import InventarComponent from "../components/InventarComponent"; import HungerComponent from "../components/HungerComponent"; import PlayerControlledComponent from "../components/PlayerControlled"; import { PositionComponent, CollisionGroups } from "../components/PositionComponent"; import FollowWithCameraComponent from "../components/FollowWithCameraComponent";
+import HitPointsComponent from "../components/HitPointsComponent";
 
 
 export default class Agent extends MapObject {
@@ -10,6 +11,10 @@ export default class Agent extends MapObject {
 
         this.add(new InventarComponent());
         this.add(new HungerComponent(this));
+
+        let hitpoints = new HitPointsComponent();
+        hitpoints.current = hitpoints.max = 10;
+        this.add(hitpoints);
 
         this.add(new PlayerControlledComponent());
 

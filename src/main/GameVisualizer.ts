@@ -63,9 +63,8 @@ export default class GameVisualizer {
             const selected = MapObject.get(game_state.selected);
             if (selected) {
                 this.inventar.display(selected);
-                // this.visualizers.hunger.display(this.object);
-
-                // this.visualizers.life.display(this.object);
+                this.hunger.display(selected);
+                this.life.display(selected);
             }
         }
 

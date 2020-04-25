@@ -41,17 +41,27 @@ export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
             this.offscreen_canvas.height = target_height;
             this.offscreen_context.imageSmoothingEnabled = false;
         }
-        this.offscreen_context.clearRect(0, 0, target_width, target_height);
+        this.offscreen_context.clearRect(
+            this.camera.display_target_rect.left,
+            this.camera.display_target_rect.top,
+            target_width,
+            target_height
+        );
         this.field_drawer.get_drawer_functions().forEach((draw) => {
             world_map.map_fields_in_rect(this.camera.map_source_rect, draw);
         });
 
         const image_data = this.offscreen_context.getImageData(
-            0, 0,
+            this.camera.display_target_rect.left,
+            this.camera.display_target_rect.top,
             target_width,
             target_height
         );
-        this.context.putImageData(image_data, 0, 0);
+        this.context.putImageData(image_data,
+            this.camera.display_target_rect.left, this.camera.display_target_rect.top,
+            0, 0,
+            target_width, target_height,
+        );
     }
 }
 

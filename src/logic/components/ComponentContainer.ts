@@ -13,8 +13,8 @@ export default class ComponentContainer<COMPONENT extends { constructor: { name:
         return this;
     }
 
-    public has(name: string): boolean {
-        return this.components.has(name);
+    public has<TARGET extends COMPONENT>(component_class: { new(...x: any): TARGET }): boolean {
+        return this.components.has(component_class.name);
     }
 
     public get<TARGET extends COMPONENT>(component_class: { new(...x: any): TARGET }): TARGET | undefined {

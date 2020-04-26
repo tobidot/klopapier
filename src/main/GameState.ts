@@ -20,6 +20,7 @@ export interface GameState {
 }
 
 export interface GameCalculatedState {
+    remaining_virusses: number;
     has_won: boolean;
     has_lost: boolean;
     fps: number;

@@ -1,6 +1,8 @@
 import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMap"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
 import FollowWithCameraComponent from "./logic/components/FollowWithCameraComponent";
 import TimeOfDaySystem from "./logic/system/TimeOfDay";
+import InfectedSpreadComponent from "./logic/components/InfectedSpreadComponent";
+import MapObject from "./logic/objects/MapObject";
 
 export default class Game {
     // Assets / Targets
@@ -45,21 +47,24 @@ export default class Game {
 
 
         this.game_state = {
-            current_level: 0,
-            camera_position: new Point(3, 3),
-            world_map: this.creator_map.build(this.level_handler.current().map_data),
-            time_of_day: this.level_handler.current().start_day_time,
-            day: 0,
             modus: GameMode.INITIAL,
+            current_level: 0,
+            day: 0,
+            time_of_day: this.level_handler.current().start_day_time,
+
+            world_map: this.creator_map.build(this.level_handler.current().map_data),
+            camera_position: new Point(3, 3),
+            selected: null,
 
             tasks: [],
             calculated: {
+                remaining_virusses: 0,
                 has_lost: false,
                 has_won: false,
                 fps: 0,
             },
-            selected: null
         }
+        this.game_state.calculated = this.update_calculated_game_state(this.game_state);
 
         // Visualizer
         this.visualizer = new GameVisualizer(this.context, this.images);
@@ -89,6 +94,7 @@ export default class Game {
         this.game_state.time_of_day = this.level_handler.current().start_day_time;
         this.game_state.world_map = this.creator_map.build(this.level_handler.current().map_data);
 
+        // select player
         this.game_state.selected = this.game_state.world_map
             .map_fields_in_rect(
                 this.game_state.world_map.get_map_boundries(),
@@ -227,9 +233,20 @@ export default class Game {
 
 
     private update_calculated_game_state(game_state: GameState): GameCalculatedState {
+        const remaining_virusses = game_state.world_map
+            .map_fields_in_rect(
+                game_state.world_map.get_map_boundries(), (field) => {
+                    return field.objects.reduce((count_viruses, next) => {
+                        if (next.has(InfectedSpreadComponent)) return count_viruses + 1;
+                        return count_viruses;
+                    }, 0);
+                }
+            ).reduce((sum, next) => sum + next);
+        const player = game_state.selected ? MapObject.get(game_state.selected) : null;
         return {
-            has_won: false,
-            has_lost: false,
+            remaining_virusses,
+            has_won: remaining_virusses === 0,
+            has_lost: !!player && !player.is_destroyed(),
             fps: this.fps_counter.get_current_fps(),
         };
     }

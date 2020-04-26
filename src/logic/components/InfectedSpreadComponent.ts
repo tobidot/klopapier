@@ -32,6 +32,6 @@ export default class InfectedSpreadComponent extends MapObjectComponent {
         const direction = get_random_of_array<Direction>(directions);
         if (direction === null) return [];
         const target = position.position.add(direction_to_point(direction, 1));
-        return [new CreateObjectTask(() => new Virus(), target)];
+        return [new CreateObjectTask((game_state) => new Virus(game_state), target)];
     }
 }

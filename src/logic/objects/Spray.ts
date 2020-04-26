@@ -1,6 +1,6 @@
 import MapObject from "./MapObject"; import { MapObjectTypeID } from "../../assets/MapObjectResources";
 import { PositionComponent, CollisionGroups } from "../components/PositionComponent";
-import IsCollectableComponent from "../components/IsCollectableComponent copy";
+import IsCollectableComponent from "../components/IsCollectableComponent";
 import VisualComponent from "../components/VisualComponent";
 import { ImageID } from "../../assets/ImageResources";
 

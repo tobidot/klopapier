@@ -14,9 +14,9 @@ export default class HungerComponent extends MapObjectComponent {
 
     public update(delta_seconds: number): Task[] {
         this.urge_to_eat = Math.min(this.urge_to_eat + delta_seconds * 2, 100);
-        let tasks: Task[] = [];
+        if (this.urge_to_eat < 100) return [];
         return this.every_second(delta_seconds).map((): DamageObjectTask => {
-            return new DamageObjectTask(this.object_id, 10);
+            return new DamageObjectTask(this.object_id, 0.25);
         });
     }
 }

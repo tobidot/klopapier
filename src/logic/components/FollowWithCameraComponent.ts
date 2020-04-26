@@ -16,7 +16,7 @@ export default class FollowWithCameraComponent extends MapObjectComponent {
     }
 
     public handle(game_state: GameState, task: Task, self: MapObject): GameState {
-        if (task instanceof MoveObjectTask) {
+        if (task instanceof MoveObjectTask && self.instance_ID === task.object_id) {
             const position = self.get(PositionComponent);
             if (position) {
                 game_state.camera_position = task.target;

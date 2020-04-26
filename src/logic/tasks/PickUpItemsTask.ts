@@ -2,7 +2,7 @@ import { Task } from "./Task";
 import { GameState } from "../../main/GameState";
 import MapObject, { ObjectID } from "../objects/MapObject";
 import { Point } from "../../ts_library/space/SimpleShapes";
-import IsCollectableComponent from "../components/IsCollectableComponent copy";
+import IsCollectableComponent from "../components/IsCollectableComponent";
 import InventarComponent from "../components/InventarComponent";
 import { PositionComponent } from "../components/PositionComponent";
 

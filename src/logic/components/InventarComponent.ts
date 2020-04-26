@@ -2,7 +2,7 @@ import MapObjectComponent from "./MapObjectComponent"; import MapObject, { Objec
 import { GameState } from "../../main/GameState";
 import { Task } from "../tasks/Task";
 import { PositionComponent } from "./PositionComponent";
-import IsCollectableComponent from "./IsCollectableComponent copy";
+import IsCollectableComponent from "./IsCollectableComponent";
 import PickUpItemsTask from "../tasks/PickUpItemsTask";
 
 export default class InventarComponent extends MapObjectComponent {

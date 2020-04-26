@@ -40,8 +40,11 @@ export default class WorldMap<TerrainTypeID> {
 
     public update(delta_seconds: number, game_state: GameState): Task[] {
         return this.map_fields_in_rect(this.get_map_boundries(), (field) => {
-            return field.objects.flatMap((object): Task[] => {
-                // Own System?
+            field.objects = field.objects.filter((object) => {
+                return !object.is_destroyed();
+            });
+            return field.objects.flatMap((object, index): Task[] => {
+                // Should be done in own System?
                 const position = object.get(PositionComponent);
                 if (position) position.position = field.location.copy();
                 return object.update(delta_seconds, game_state);

@@ -17,9 +17,8 @@ export default class LifeOnScreen {
     display(object: MapObject) {
         const hitpoints = object.get(HitPointsComponent);
         if (!hitpoints) return;
-        if (hitpoints.current <= 0) return;
         const bar_width = this.display_rect.width();
-        const percentage = (hitpoints.current / hitpoints.max);
+        const percentage = (Math.max(0, hitpoints.current) / hitpoints.max);
 
         this.context.font = "32px sans-serif";
 

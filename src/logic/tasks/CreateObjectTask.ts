@@ -7,7 +7,7 @@ import { MapFieldData } from "../../loading/MapData";
 import MapObjectComponent from "../components/MapObjectComponent";
 
 export default class CreateObjectTask extends Task {
-    constructor(public readonly create_template: { (): MapObject }, public readonly target: Point) {
+    constructor(public readonly create_template: { (game_state: GameState): MapObject }, public readonly target: Point) {
         super();
     }
 
@@ -26,7 +26,7 @@ export default class CreateObjectTask extends Task {
     public execute(game_state: GameState): GameState {
         const field = game_state.world_map.at(this.target);
         if (!field) return game_state;
-        const object = this.create_template();
+        const object = this.create_template(game_state);
         const position = object.get(PositionComponent);
         if (position) {
             position.position = this.target.copy();

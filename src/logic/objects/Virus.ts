@@ -14,7 +14,7 @@ export default class Virus extends MapObject {
 
         let position = new PositionComponent();
         position.collision_group = CollisionGroups.MOVEABLE;
-        position.collision_mask = CollisionGroups.INTERACTABLE;
+        position.collision_mask = CollisionGroups.INTERACTABLE | CollisionGroups.MOVEABLE;
         this.add(position);
 
         let spread = new InfectedSpreadComponent();

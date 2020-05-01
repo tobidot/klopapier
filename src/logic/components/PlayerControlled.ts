@@ -1,4 +1,4 @@
-import MapObjectComponent from "./MapObjectComponent"; import { create_timed_array_elements } from "../../ts_library/utility/Timed"; import MapObject from "../objects/MapObject"; import { Task } from "../tasks/Task"; import { PositionComponent } from "./PositionComponent"; import { GameState } from "../../main/GameState"; import InputMoveTask from "../tasks/InputMoveTask"; import { direction_to_point } from "../../ts_library/conversion/fromDirection"; import { MoveObjectTask } from "../tasks/MoveObjectTask";
+import MapObjectComponent from "./MapObjectComponent"; import { create_timed_array_elements } from "../../ts_library/utility/Timed"; import MapObject from "../objects/MapObject"; import { Task } from "../tasks/Task"; import { PositionComponent, CollisionGroups } from "./PositionComponent"; import { GameState } from "../../main/GameState"; import InputMoveTask from "../tasks/InputMoveTask"; import { direction_to_point } from "../../ts_library/conversion/fromDirection"; import { MoveObjectTask } from "../tasks/MoveObjectTask";
 import { ListenerSocket } from "../../ts_library/ui/Listener";
 import { Direction } from "../../ts_library/space/Direction";
 import InventarComponent from "./InventarComponent";
@@ -60,7 +60,7 @@ export default class PlayerControlledComponent extends MapObjectComponent {
         if (!charges_available) return game_state;
         // Do ACTION
         // Create desinfected blob
-        this.tasks.push(new CreateObjectTask(game_state => new DesinfectionBlob(), position.position));
+        this.tasks.push(new CreateObjectTask(game_state => new DesinfectionBlob(), position.position, CollisionGroups.GHOST));
 
         return game_state;
     }

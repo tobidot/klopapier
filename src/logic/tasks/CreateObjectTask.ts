@@ -7,7 +7,10 @@ import { MapFieldData } from "../../loading/MapData";
 import MapObjectComponent from "../components/MapObjectComponent";
 
 export default class CreateObjectTask extends Task {
-    constructor(public readonly create_template: { (game_state: GameState): MapObject }, public readonly target: Point) {
+    constructor(
+        public readonly create_template: { (game_state: GameState): MapObject },
+        public readonly target: Point,
+        public readonly collision_mask: CollisionGroups = CollisionGroups.MOVEABLE) {
         super();
     }
 
@@ -17,7 +20,7 @@ export default class CreateObjectTask extends Task {
         const is_walkable: boolean = field.objects.reduce((walkable: boolean, object: MapObject): boolean => {
             const position = object.get(PositionComponent);
             if (!position) return walkable;
-            return walkable && !(position.collision_mask & CollisionGroups.MOVEABLE);
+            return walkable && !(position.collision_mask & this.collision_mask);
         }, true);
         if (!is_walkable) return false;
         return true;

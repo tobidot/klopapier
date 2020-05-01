@@ -6,18 +6,24 @@ import { MapObjectTypeID } from "../../../assets/MapObjectResources";
 import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
 import MovingComponent from "../../../logic/components/MovingComponent";
 import MapObject from "../../../logic/objects/MapObject";
+import VisualComponent from "../../../logic/components/VisualComponent";
 
 
 
 export class ObjectDrawer extends FieldPartDrawer {
+    public static failed_at_object_types: Array<MapObjectTypeID> = [];
 
     constructor(private images: ImageManager) {
         super();
     }
 
     public draw(draw: FieldDrawerPartDraw, field: Field, visual_data: VisualFieldData) {
-        let object_image_id = ObjectDrawer.get_image_for_object_type(field.objects[field.objects.length - 1]);
-        if (object_image_id !== null) {
+        field.objects.sort((a, b): number => {
+            let visual_a = a.get(VisualComponent);
+            let visual_b = b.get(VisualComponent);
+            return ((visual_a?.priority || 0) - (visual_b?.priority || 0));
+        }).map(ObjectDrawer.get_image_for_object_type).forEach((object_image_id: ImageID | null) => {
+            if (object_image_id === null) return;
             let object_image = this.images.get(object_image_id);
             // if (field.objects instanceof MovingMapObject && field.objects.moving_progress !== false) {
             //     const offset: Point = direction_to_point(field.objects.comming_from_direction, field.objects.moving_progress * 32);
@@ -25,7 +31,7 @@ export class ObjectDrawer extends FieldPartDrawer {
             // } else {
             draw(object_image);
             // }
-        }
+        });
     }
 
 
@@ -51,8 +57,11 @@ export class ObjectDrawer extends FieldPartDrawer {
                 }
                 return ImageID.UNIT__SMILEY_DOWN;
             default:
-                console.error('No Image found for Object ' + object.type);
-                return null;
+                if (object.type in ObjectDrawer.failed_at_object_types === false) console.error('No custom Image specified for Object ' + object.type);
+                ObjectDrawer.failed_at_object_types.push(object.type);
+                const visual = object.get(VisualComponent);
+                if (!visual) return ImageID.OTHER__ERROR;
+                return visual.image;
         }
     }
 

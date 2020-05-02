@@ -31,6 +31,10 @@ export class Point implements IPoint {
         return new Point(this.x * value.x, this.y * value.y);
     }
 
+    public distance2(): number {
+        return this.x * this.x + this.y * this.y;
+    }
+
     public equals(other: Point, epsilon?: number): boolean;
     public equals(by_x: number, by_y: number, epsilon?: number): boolean;
     public equals(by_x: number | Point, by_y?: number, epsilon?: number): boolean {

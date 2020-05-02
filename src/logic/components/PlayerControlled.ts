@@ -16,6 +16,7 @@ import PaperBlob from "../objects/PaperBlob";
 import ChargesComponent from "./ChargesComponent";
 import IsPaperComponent from "./IsPaperComponent";
 import IsSprayComponent from "./IsSprayComponent";
+import { MapObjectTypeID } from "../../assets/MapObjectResources";
 
 
 export default class PlayerControlledComponent extends MapObjectComponent {
@@ -56,7 +57,7 @@ export default class PlayerControlledComponent extends MapObjectComponent {
             return sum + 1;
         }, 0) > 0;
         // Check if i have spray charges left
-        const charges_available = this.use_charge_if_available(self, 1, (object) => object.has(IsSprayComponent));
+        const charges_available = this.use_charge_if_available(self, 1, (object) => object.type === MapObjectTypeID.SPRAY);
         if (!charges_available) return game_state;
         // Do ACTION
         // Create desinfected blob
@@ -76,7 +77,7 @@ export default class PlayerControlledComponent extends MapObjectComponent {
             return sum + 1;
         }, 0) > 0;
         // Check if i have spray charges left
-        const charges_available = this.use_charge_if_available(self, 1, (object) => object.has(IsPaperComponent));
+        const charges_available = this.use_charge_if_available(self, 1, (object) => object.type === MapObjectTypeID.PAPER_ROLL);
         if (!charges_available) return game_state;
         // Do ACTION
         // Create paper blob

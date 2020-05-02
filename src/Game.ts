@@ -118,7 +118,7 @@ export default class Game {
         let last_update = performance.now();
         const update = (() => {
             const now = performance.now();
-            const delta_seconds = (now - last_update) / 1000;
+            const delta_seconds = Math.min(0.013, (now - last_update) / 1000);
             this.fps_counter.update();
             this.update(delta_seconds);
             this.draw(delta_seconds);

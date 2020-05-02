@@ -7,11 +7,15 @@ import { FieldPartDrawer, FieldDrawerPartDraw } from "./FieldPartDrawer";
 import MovingComponent from "../../../logic/components/MovingComponent";
 import MapObject from "../../../logic/objects/MapObject";
 import VisualComponent from "../../../logic/components/VisualComponent";
+import { PositionComponent } from "../../../logic/components/PositionComponent";
+import { Point } from "../../../ts_library/space/SimpleShapes";
+import { direction_to_point } from "../../../ts_library/conversion/fromDirection";
 
 
 
 export class ObjectDrawer extends FieldPartDrawer {
     public static failed_at_object_types: Array<MapObjectTypeID> = [];
+
 
     constructor(private images: ImageManager) {
         super();
@@ -22,15 +26,18 @@ export class ObjectDrawer extends FieldPartDrawer {
             let visual_a = a.get(VisualComponent);
             let visual_b = b.get(VisualComponent);
             return ((visual_a?.priority || 0) - (visual_b?.priority || 0));
-        }).map(ObjectDrawer.get_image_for_object_type).forEach((object_image_id: ImageID | null) => {
+        }).forEach((object) => {
+            const object_image_id: ImageID | null = ObjectDrawer.get_image_for_object_type(object);
             if (object_image_id === null) return;
             let object_image = this.images.get(object_image_id);
-            // if (field.objects instanceof MovingMapObject && field.objects.moving_progress !== false) {
-            //     const offset: Point = direction_to_point(field.objects.comming_from_direction, field.objects.moving_progress * 32);
-            //     draw(object_image, offset);
-            // } else {
-            draw(object_image);
-            // }
+            const position = object.get(PositionComponent);
+            const moving = object.get(MovingComponent);
+            if (!position ||
+                !moving ||
+                moving.progress === false ||
+                moving.previous_position === null) return draw(object_image);
+            const offset: Point = position.position.sub(moving.previous_position).mul(moving.progress - 1);
+            draw(object_image, offset);
         });
     }
 

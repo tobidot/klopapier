@@ -53,7 +53,7 @@ export default class FieldDrawer {
 
     private draw_part_field_function = (image: HTMLImageElement, offset: Point = new Point(0, 0)) => {
         const field_size = this.next_field_pixel_size;
-        const screen_position = this.next_field_screen_position.add(offset);
+        const screen_position = this.next_field_screen_position.add(offset.mul(field_size));
         this.context.drawImage(image, screen_position.x, screen_position.y, field_size.x, field_size.y);
     }
 }

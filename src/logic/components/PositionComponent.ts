@@ -11,7 +11,6 @@ export enum CollisionGroups {
 }
 
 export class PositionComponent extends MapObjectComponent {
-    public static NAME = "position";
     public position: Point = new Point(0, 0);
     // collision_mask & collision_group === 0  => can walk here 
     public collision_mask: number = CollisionGroups.GHOST;
@@ -22,7 +21,7 @@ export class PositionComponent extends MapObjectComponent {
     }
 
     public handle(game_state: GameState, task: Task, self: MapObject): GameState {
-        if (task instanceof MoveObjectTask) {
+        if (task instanceof MoveObjectTask && task.object_id === self.instance_ID) {
             this.position = task.target;
         }
         return game_state;

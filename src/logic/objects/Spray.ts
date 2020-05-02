@@ -10,11 +10,6 @@ export default class Spray extends MapObject {
     constructor() {
         super(MapObjectTypeID.SPRAY);
 
-
-        const spray = new IsSprayComponent();
-        this.add(spray);
-
-
         const position = new PositionComponent();
         position.collision_group = CollisionGroups.COLLECTABLE;
         position.collision_mask = CollisionGroups.UNPASSABLE;

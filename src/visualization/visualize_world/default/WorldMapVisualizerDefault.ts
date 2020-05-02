@@ -5,6 +5,7 @@ import { WorldMapVisualizer, Camera } from "../WorldMapVisualizer";
 import FieldDrawer from "./FieldDrawer";
 import { TerrainDrawer } from "./TerrainDrawer";
 import { ObjectDrawer } from "./ObjectDrawer";
+import { Rect } from "../../../ts_library/space/SimpleShapes";
 
 export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
     private field_drawer: FieldDrawer;
@@ -47,8 +48,14 @@ export default class WorldMapVisualizerDefault extends WorldMapVisualizer {
             target_width,
             target_height
         );
+        const source_rect = Rect.from_boundries(
+            Math.trunc(this.camera.map_source_rect.left),
+            Math.trunc(this.camera.map_source_rect.top),
+            Math.ceil(this.camera.map_source_rect.right),
+            Math.ceil(this.camera.map_source_rect.bottom),
+        );
         this.field_drawer.get_drawer_functions().forEach((draw) => {
-            world_map.map_fields_in_rect(this.camera.map_source_rect, draw);
+            world_map.map_fields_in_rect(source_rect, draw);
         });
 
         const image_data = this.offscreen_context.getImageData(

@@ -5,10 +5,14 @@ import ChargesComponent from "../components/ChargesComponent";
 import VisualComponent from "../components/VisualComponent";
 import { ImageID } from "../../assets/ImageResources";
 import DamageOtherObjectsComponent from "../components/DamageOtherObjectsComponent";
+import IsSprayComponent from "../components/IsSprayComponent";
 
 export default class DesinfectionBlob extends MapObject {
     constructor() {
         super(MapObjectTypeID.SPRAY_BLOB);
+
+        const spray = new IsSprayComponent();
+        this.add(spray);
 
         const position = new PositionComponent();
         position.collision_group = CollisionGroups.GHOST;

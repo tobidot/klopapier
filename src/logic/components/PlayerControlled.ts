@@ -17,6 +17,7 @@ import ChargesComponent from "./ChargesComponent";
 import IsPaperComponent from "./IsPaperComponent";
 import IsSprayComponent from "./IsSprayComponent";
 import { MapObjectTypeID } from "../../assets/MapObjectResources";
+import MovingComponent from "./MovingComponent";
 
 
 export default class PlayerControlledComponent extends MapObjectComponent {
@@ -40,6 +41,8 @@ export default class PlayerControlledComponent extends MapObjectComponent {
     public handle_input_move(game_state: GameState, task: InputMoveTask, self: MapObject): GameState {
         const position = self.get(PositionComponent);
         if (!position) return game_state;
+        const moving = self.get(MovingComponent);
+        if (moving && moving.progress !== false) return game_state;
         const source = position.position;
         const target = position.position.add(direction_to_point(task.direction, 1));
         this.tasks.push(new MoveObjectTask(source, target, self.instance_ID));

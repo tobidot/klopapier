@@ -1,8 +1,15 @@
-import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMap"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
+import ImageManager from "./manager/ImageManager"; import FpsCounter from "./ts_library/utility/FpsCounter"; import CreateMap from "./logic/map/helper/CreateMap"; import { InputDelegator } from "./logic/user_input/Input"; import { Task } from "./logic/tasks/Task"; import System from "./logic/system/System"; import { GameState, GameCalculatedState, GameResult } from "./main/GameState"; import GameLevels from "./main/GameLevels"; import GameVisualizer from "./main/GameVisualizer"; import { Point } from "./ts_library/space/SimpleShapes"; import { GameMode } from "./main/GameMode"; import UpdateMapSystem from "./logic/system/UpdateMapSystem"; import TaskHandleSystem from "./logic/system/TaskHandleSystem"; import InputHandlingSystem from "./logic/system/InputHandlingSystem"; import { image_resources } from "./assets/ImageResources"; import Spray from "./logic/objects/Spray"; import Nudel from "./logic/objects/Nudel"; import Paperroll from "./logic/objects/Klopapier"; import Virus from "./logic/objects/Virus";
 import FollowWithCameraComponent from "./logic/components/FollowWithCameraComponent";
-import TimeOfDaySystem from "./logic/system/TimeOfDay";
+import TimeOfDaySystem from "./logic/system/TimeOfDaySystem";
 import InfectedSpreadComponent from "./logic/components/InfectedSpreadComponent";
 import MapObject from "./logic/objects/MapObject";
+import CalculateInformationSystem from "./logic/system/CalculateInformationSystem";
+import WinOrLooseSystem from "./logic/system/WinOrLooseSystem";
+import WorldMap from "./logic/map/WorldMap";
+import Field from "./logic/map/Field";
+import { TerrainTypeID } from "./assets/TerrainResources";
+import RestartLevelSystemEvent from "./logic/system/events/RestartLevelSystemEvent";
+import LevelLoaderSystem from "./logic/system/LevelLoaderSystem";
 
 export default class Game {
     // Assets / Targets
@@ -11,7 +18,6 @@ export default class Game {
 
     // Various Helpers
     private fps_counter: FpsCounter = new FpsCounter(60, 60);
-    private creator_map: CreateMap = new CreateMap();
 
 
     //private players: Array<Player>;
@@ -22,7 +28,6 @@ export default class Game {
     private systems: Array<System> = [];
     private game_state: GameState;
 
-    private level_handler: GameLevels;
     private visualizer: GameVisualizer;
 
     constructor(element: HTMLElement) {
@@ -42,40 +47,47 @@ export default class Game {
         });
 
 
-        // load levels 
-        this.level_handler = new GameLevels();
-
 
         this.game_state = {
             modus: GameMode.INITIAL,
+            post_game_stats: {
+                won_or_lost: GameResult.TIE,
+            },
             current_level: 0,
             day: 0,
-            time_of_day: this.level_handler.current().start_day_time,
+            time_of_day: 6,
 
-            world_map: this.creator_map.build(this.level_handler.current().map_data),
+            world_map: new WorldMap(5, 5, (map, x, y): Field => {
+                return { location: new Point(x, y), objects: [], terrain: { type: TerrainTypeID.OUTDOOR_GRAS, variation_key: "default" } };
+            }),
             camera_position: new Point(3, 3),
             selected: null,
 
             tasks: [],
             calculated: {
                 remaining_virusses: 0,
-                has_lost: false,
-                has_won: false,
-                fps: 0,
+                remaining_humans: 0,
             },
         }
-        this.game_state.calculated = this.update_calculated_game_state(this.game_state);
 
         // Visualizer
         this.visualizer = new GameVisualizer(this.context, this.images);
 
 
         this.systems = [
+            new LevelLoaderSystem(),
+            new CalculateInformationSystem(),
+            new WinOrLooseSystem(),
             new TimeOfDaySystem(),
             new UpdateMapSystem(),
             new TaskHandleSystem(),
             new InputHandlingSystem(this.input_delegator),
-        ]
+        ];
+        System.events.add((event) => {
+            this.systems.forEach((system) => {
+                system.handle(event);
+            });
+        });
     }
 
     private setup_dom_context(element: HTMLElement): CanvasRenderingContext2D {
@@ -90,31 +102,16 @@ export default class Game {
         return this.context = context;
     }
 
-    private reset_level() {
-        this.game_state.time_of_day = this.level_handler.current().start_day_time;
-        this.game_state.world_map = this.creator_map.build(this.level_handler.current().map_data);
-
-        // select player
-        this.game_state.selected = this.game_state.world_map
-            .map_fields_in_rect(
-                this.game_state.world_map.get_map_boundries(),
-                field => field.objects
-            )
-            .flatMap(objects => objects.filter(object => object.get(FollowWithCameraComponent)))
-            .reduce((selected, next) => selected || next)
-            .instance_ID;
-    }
 
     private construct_image_manager(): ImageManager {
         return new ImageManager(image_resources);
     }
 
     async start() {
-
         await this.images.wait_until_loaded();
         // this.levels = map_images.map(load_mapdata_from_image);
-        this.reset_level();
-
+        System.events.trigger_event(new RestartLevelSystemEvent());
+        this.game_state.modus = GameMode.PLAYING;
         let last_update = performance.now();
         const update = (() => {
             const now = performance.now();
@@ -129,7 +126,6 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
-        if (this.game_state.modus) return;
         // keep an eye on win/loose condition
         // this.infection_count = this.objects.reduce((count, object) => object instanceof Virus ? count + 1 : count, 0);
 
@@ -160,14 +156,6 @@ export default class Game {
         //     return field;
         // });
 
-
-        // Control time of day
-        // this.time_of_day += delta_seconds / 2;
-        // if (this.time_of_day >= 24) {
-        //     this.day++;
-        //     this.time_of_day -= 24;
-        //     this.paper_kiled = -1;
-        // }
 
         // Destroy Paper
         // if (this.time_of_day >= this.paper_kiled + 1) {
@@ -216,7 +204,6 @@ export default class Game {
         this.game_state = this.systems.reduce((game_state, system) => {
             return system.update(delta_seconds, this.game_state);
         }, this.game_state);
-        this.game_state.calculated = this.update_calculated_game_state(this.game_state);
 
         // if (!this.has_won && this.objects.filter((object) => object instanceof Virus).length === 0) {
         //     this.has_won = true;
@@ -230,30 +217,6 @@ export default class Game {
 
         this.visualizer.display(delta_seconds, this.game_state);
     }
-
-
-    private update_calculated_game_state(game_state: GameState): GameCalculatedState {
-        const remaining_virusses = game_state.world_map
-            .map_fields_in_rect(
-                game_state.world_map.get_map_boundries(), (field) => {
-                    return field.objects.reduce((count_viruses, next) => {
-                        if (next.has(InfectedSpreadComponent)) return count_viruses + 1;
-                        return count_viruses;
-                    }, 0);
-                }
-            ).reduce((sum, next) => sum + next);
-        const player = game_state.selected ? MapObject.get(game_state.selected) : null;
-        return {
-            remaining_virusses,
-            has_won: remaining_virusses === 0,
-            has_lost: !!player && !player.is_destroyed(),
-            fps: this.fps_counter.get_current_fps(),
-        };
-    }
-
-    public create_object(object_constructor: CreateableObjectTypes, pos: Point) {
-        // this.to_add_objects.push(new object_constructor(this.world_map, pos));
-    }
 }
 
-type CreateableObjectTypes = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus;
+//type CreateableObjectTypes = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus;

@@ -8,7 +8,7 @@ import display_number_on_screen from "../visualization/utils/NumberOnScreen"
 import WorldMapVisualizerDefault from "../visualization/visualize_world/default/WorldMapVisualizerDefault"
 import { Point, Rect } from "../ts_library/space/SimpleShapes"
 import ImageManager from "../manager/ImageManager"
-import { GameState } from "./GameState"
+import { GameState, GameResult } from "./GameState"
 import { GameMode } from "./GameMode"
 import LoosingScreen from "../visualization/screens/LoosingScreen"
 import WinningScreen from "../visualization/screens/WinningScreen"
@@ -47,7 +47,8 @@ export default class GameVisualizer {
 
     public display(delta_seconds: number, game_state: GameState) {
         switch (game_state.modus) {
-            case GameMode.INTERSECTION:
+            case GameMode.INTERMISSION:
+                this.display_intersection(delta_seconds, game_state);
                 break;
             case GameMode.PLAYING:
             case GameMode.LOADING:
@@ -75,7 +76,7 @@ export default class GameVisualizer {
         // this.context.fillStyle = "gray";
         //this.context.fillRect(650, 500, 150, 100);
         this.daytime.display(game_state.time_of_day / 24, game_state.day);
-        this.fps_counter(game_state.calculated.fps);
+        // this.fps_counter(game_state.calculated.fps);
         //this.visualizers.infection.display(this.infection_count);
 
 
@@ -83,8 +84,15 @@ export default class GameVisualizer {
 
     private display_intersection(delta_seconds: number, game_state: GameState) {
         //if (game_state.has_won)
-        if (game_state.calculated.has_won) this.loosing_screen.display(delta_seconds, game_state);
-        if (game_state.calculated.has_lost) this.winning_screen.display(delta_seconds, game_state);
+        switch (game_state.post_game_stats.won_or_lost) {
+            case GameResult.TIE:
+            case GameResult.LOST:
+                this.loosing_screen.display(delta_seconds, game_state);
+                break;
+            case GameResult.WON:
+                this.winning_screen.display(delta_seconds, game_state);
+                break;
+        }
 
         // if (this.current_intersect !== null && this.intersections[this.game_state.current_level]) {
         //     let intersect_image_id = this.intersections[this.game_state.current_level][this.current_intersect];

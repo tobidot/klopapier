@@ -3,5 +3,5 @@ export enum GameMode {
     LOADING,
     PLAYING,
     PAUSE,
-    INTERSECTION,
+    INTERMISSION,
 }

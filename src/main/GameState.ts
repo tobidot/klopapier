@@ -6,8 +6,9 @@ import { Task } from "../logic/tasks/Task";
 import { ObjectID } from "../logic/objects/MapObject";
 
 export interface GameState {
-    modus: GameMode;
     calculated: GameCalculatedState;
+    modus: GameMode;
+    post_game_stats: PostGameStats;
 
     world_map: WorldMap<TerrainTypeID>;
     day: number;
@@ -21,7 +22,19 @@ export interface GameState {
 
 export interface GameCalculatedState {
     remaining_virusses: number;
-    has_won: boolean;
-    has_lost: boolean;
-    fps: number;
+    remaining_humans: number;
+    // has_won: boolean;
+    // has_lost: boolean;
+    // fps: number;
+}
+
+
+export interface PostGameStats {
+    won_or_lost: GameResult;
+}
+
+export enum GameResult {
+    WON,
+    LOST,
+    TIE
 }

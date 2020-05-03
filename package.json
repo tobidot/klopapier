@@ -9,7 +9,7 @@
     "package": "zip ./dist-build/dist-build.zip ./dist-build/*.*",
 
     "watch:utils": "tsc --build ./utils/tsconfig.json --watch",
-    "parse:levels": "node ./utils/dist/index.js ./src/assets/images/maps/"
+    "parse:levels": "node ./utils/generate_levels.js ./src/assets/images/maps/"
   },
   "author": "tobidot <Object.name@live.de>",
   "license": "MIT",

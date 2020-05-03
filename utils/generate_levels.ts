@@ -1,5 +1,6 @@
 import fs, { Dirent } from "fs";
 import jimp from "jimp";
+import { match } from "assert";
 
 (function () {
     if (process.argv.length !== 3) {
@@ -11,9 +12,14 @@ import jimp from "jimp";
         print_usage();
         return;
     }
-    const file_match = target_argument.match(/^(.*)(([a-zA-Z0-9-_]*)(\.png))?$/);
+    const file_match = target_argument.match(/^((.|..|[^./]+)(\/|$))*(([a-zA-Z0-9-_]+)(\.png))?$/m);
+    console.log(file_match);
     if (!file_match || file_match.length === 0) throw new Error('Invalid path to folder or file : ' + target_argument);
-    if (file_match.length === 1) {
+    if (file_match.includes('.png')) {
+        if (fs.existsSync(target_argument)) {
+            create_map_file_for_image_file(target_argument);
+        }
+    } else {
         const [target_path] = file_match;
         const dir = fs.opendirSync(target_path);
         let entry: Dirent | null = null;
@@ -23,8 +29,6 @@ import jimp from "jimp";
             }
         }
         dir.closeSync();
-    } else {
-        create_map_file_for_image_file(target_argument);
     }
 
 

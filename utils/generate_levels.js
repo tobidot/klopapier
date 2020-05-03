@@ -67,10 +67,16 @@ var jimp_1 = __importDefault(require("jimp"));
         print_usage();
         return;
     }
-    var file_match = target_argument.match(/^(.*)(([a-zA-Z0-9-_]*)(\.png))?$/);
+    var file_match = target_argument.match(/^((.|..|[^./]+)(\/|$))*(([a-zA-Z0-9-_]+)(\.png))?$/m);
+    console.log(file_match);
     if (!file_match || file_match.length === 0)
         throw new Error('Invalid path to folder or file : ' + target_argument);
-    if (file_match.length === 1) {
+    if (file_match.includes('.png')) {
+        if (fs_1.default.existsSync(target_argument)) {
+            create_map_file_for_image_file(target_argument);
+        }
+    }
+    else {
         var _b = __read(file_match, 1), target_path = _b[0];
         var dir = fs_1.default.opendirSync(target_path);
         var entry = null;
@@ -80,9 +86,6 @@ var jimp_1 = __importDefault(require("jimp"));
             }
         }
         dir.closeSync();
-    }
-    else {
-        create_map_file_for_image_file(target_argument);
     }
     function create_map_file_for_image_file(file_name) {
         return __awaiter(this, void 0, void 0, function () {

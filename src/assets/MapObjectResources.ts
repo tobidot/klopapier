@@ -8,4 +8,7 @@ export enum MapObjectTypeID {
     VIRUS,
     WALL,
     FURNITURE1,
+    DISH,
+    TOILET,
+    CLINICAL_PALLETTE,
 };

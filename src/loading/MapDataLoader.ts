@@ -1,4 +1,7 @@
 import MapData, { MapFieldData } from "./MapData"; import { TerrainTypeID } from "../assets/TerrainResources"; import Wall from "../logic/objects/Wall"; import Spray from "../logic/objects/Spray"; import Agent from "../logic/objects/Agent"; import Virus from "../logic/objects/Virus"; import Paperroll from "../logic/objects/Klopapier"; import Nudel from "../logic/objects/Nudel";
+import ClinicalPalette from "../logic/objects/ClinicalPallette";
+import Toilet from "../logic/objects/Toilet";
+import Dish from "../logic/objects/Dish";
 
 export function load_mapdata_from_image(image: HTMLImageElement): MapData {
     const canvas = new OffscreenCanvas(image.width, image.height);
@@ -40,7 +43,8 @@ export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
         };
 
         case Colors.GRAY: return {
-            terrain: TerrainTypeID.INDOOR_CLINICAL_PALLETTE,
+            terrain: TerrainTypeID.INDOOR_SHOP,
+            object: ClinicalPalette,
         };
         case Colors.WHITE: return {
             terrain: TerrainTypeID.INDOOR_SHOP,
@@ -72,7 +76,8 @@ export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
             object: Paperroll,
         };
         case Colors.DARK_YELLOW: return {
-            terrain: TerrainTypeID.INDOOR_TOILET,
+            terrain: TerrainTypeID.INDOOR_SHOP,
+            object: Toilet,
         };
 
         case Colors.BLUE: return {
@@ -80,11 +85,13 @@ export function color_to_mapfielddata(color: number): Partial<MapFieldData> {
             object: Nudel
         };
         case Colors.DARK_BLUE: return {
-            terrain: TerrainTypeID.INDOOR_TABLE,
+            terrain: TerrainTypeID.INDOOR_SHOP,
+            object: Dish,
         };
 
         case Colors.DARK_MAGENTA: return {
-            terrain: TerrainTypeID.INDOOR_CLINICAL_PALLETTE,
+            terrain: TerrainTypeID.INDOOR_SHOP,
+            object: ClinicalPalette,
         };
         case Colors.MAGENTA: return {
             terrain: TerrainTypeID.INDOOR_SHOP,

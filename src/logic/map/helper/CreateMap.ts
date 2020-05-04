@@ -21,7 +21,7 @@ export default class CreateMap {
         ];
         const terrain: Terrain = {
             type: field_data.terrain,
-            variation_key: 'default',
+            variation_key: 0,
         };
         let objects = [];
         if (field_data.object) {

@@ -9,7 +9,7 @@ export default class Agent extends MapObject {
         super(MapObjectTypeID.PLAYER);
         let position = new PositionComponent();
         position.collision_group = CollisionGroups.MOVEABLE;
-        position.collision_mask = CollisionGroups.MOVEABLE | CollisionGroups.INTERACTABLE;
+        position.collision_mask = CollisionGroups.MOVEABLE;
 
 
         let moving = new MovingComponent();

@@ -20,7 +20,7 @@ export default class CreateObjectTask extends Task {
         const is_walkable: boolean = field.objects.reduce((walkable: boolean, object: MapObject): boolean => {
             const position = object.get(PositionComponent);
             if (!position) return walkable;
-            return walkable && !(position.collision_mask & this.collision_mask);
+            return walkable && !(position.collision_group & this.collision_mask);
         }, true);
         if (!is_walkable) return false;
         return true;
@@ -29,7 +29,7 @@ export default class CreateObjectTask extends Task {
     public execute(game_state: GameState): GameState {
         const field = game_state.world_map.at(this.target);
         if (!field) return game_state;
-        const object = this.create_template(game_state);
+        const object = (this.create_template)(game_state);
         const position = object.get(PositionComponent);
         if (position) {
             position.position = this.target.copy();

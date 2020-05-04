@@ -58,7 +58,7 @@ export default class Game {
             time_of_day: 6,
 
             world_map: new WorldMap(5, 5, (map, x, y): Field => {
-                return { location: new Point(x, y), objects: [], terrain: { type: TerrainTypeID.OUTDOOR_GRAS, variation_key: "default" } };
+                return { location: new Point(x, y), objects: [], terrain: { type: TerrainTypeID.OUTDOOR_GRAS, variation_key: 0 } };
             }),
             camera_position: new Point(3, 3),
             selected: null,

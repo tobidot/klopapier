@@ -1,7 +1,10 @@
 import Agent from "../logic/objects/Agent"; import Spray from "../logic/objects/Spray"; import Nudel from "../logic/objects/Nudel"; import Paperroll from "../logic/objects/Klopapier"; import Virus from "../logic/objects/Virus"; import Wall from "../logic/objects/Wall"; import { TerrainTypeID } from "../assets/TerrainResources"; import { Direction } from "../ts_library/space/Direction";
+import ClinicalPalette from "../logic/objects/ClinicalPallette";
+import Dish from "../logic/objects/Dish";
+import Toilet from "../logic/objects/Toilet";
 
 
-type AllowedObjectType = typeof Agent | typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;
+type AllowedObjectType = typeof Dish | typeof ClinicalPalette | typeof Toilet | typeof Agent | typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus | typeof Wall;
 export interface MapFieldData {
     terrain: TerrainTypeID,
     object?: AllowedObjectType,

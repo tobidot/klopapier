@@ -33,7 +33,7 @@ export default class PlayerControlledComponent extends MapObjectComponent {
     public handle(game_state: GameState, task: Task, self: MapObject): GameState {
         if (task instanceof InputMoveTask) return this.handle_input_move(game_state, task, self);
         if (task instanceof InputUseSprayTask) return this.handle_input_use_spray(game_state, task, self);
-        if (task instanceof InputUsePaperTask) return this.handle_input_use_spray(game_state, task, self);
+        if (task instanceof InputUsePaperTask) return this.handle_input_use_paper(game_state, task, self);
         if (task instanceof InputEatTask) return this.handle_input_eat(game_state, task, self);
         return game_state;
     }
@@ -56,43 +56,45 @@ export default class PlayerControlledComponent extends MapObjectComponent {
         const field = game_state.world_map.at(position.position);
         if (!field) return game_state;
         const is_occupied = field.objects.reduce((sum, object) => {
-            if (object.instance_ID !== self.instance_ID) return sum;
+            if (object.instance_ID === self.instance_ID) return sum;
             return sum + 1;
         }, 0) > 0;
+        if (is_occupied) return game_state;
         // Check if i have spray charges left
         const charges_available = this.use_charge_if_available(self, 1, (object) => object.type === MapObjectTypeID.SPRAY);
         if (!charges_available) return game_state;
         // Do ACTION
         // Create desinfected blob
-        this.tasks.push(new CreateObjectTask(game_state => new DesinfectionBlob(), position.position, CollisionGroups.GHOST));
+        this.tasks.push(new CreateObjectTask(game_state => new DesinfectionBlob(), position.position, CollisionGroups.INTERACTABLE));
 
         return game_state;
     }
 
-    public handle_input_use_paper(game_state: GameState, task: InputUseSprayTask, self: MapObject): GameState {
+    public handle_input_use_paper(game_state: GameState, task: InputUsePaperTask, self: MapObject): GameState {
         // Check if field target is valid
         const position = self.get(PositionComponent);
         if (!position) return game_state;
         const field = game_state.world_map.at(position.position);
         if (!field) return game_state;
         const is_occupied = field.objects.reduce((sum, object) => {
-            if (object.instance_ID !== self.instance_ID) return sum;
+            if (object.instance_ID === self.instance_ID) return sum;
             return sum + 1;
         }, 0) > 0;
+        if (is_occupied) return game_state;
         // Check if i have spray charges left
         const charges_available = this.use_charge_if_available(self, 1, (object) => object.type === MapObjectTypeID.PAPER_ROLL);
         if (!charges_available) return game_state;
         // Do ACTION
         // Create paper blob
-        this.tasks.push(new CreateObjectTask(game_state => new PaperBlob(), position.position));
+        this.tasks.push(new CreateObjectTask(game_state => new PaperBlob(), position.position, CollisionGroups.INTERACTABLE));
 
         return game_state;
     }
 
-    public handle_input_eat(game_state: GameState, task: InputUseSprayTask, self: MapObject): GameState {
+    public handle_input_eat(game_state: GameState, task: InputEatTask, self: MapObject): GameState {
         const hunger = self.get(HungerComponent);
         if (!hunger) return game_state;
-        const charges_available = this.use_charge_if_available(self, 1, (object) => object.has(IsEdibleComponent));
+        const charges_available = this.use_charge_if_available(self, 1, (object) => object.type === MapObjectTypeID.NUDEL);
         if (!charges_available) return game_state;
         // reduce hunger
         hunger.urge_to_eat = Math.max(0, hunger.urge_to_eat - 50);

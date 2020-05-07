@@ -14,7 +14,7 @@ import { load_mapdata_from_image_array } from "../loading/MapDataLoader";
 type RawMapData = { width: number, height: number, data: number[] };
 
 export default class GameLevels {
-    private current_level = 0;
+    private current_level = 1;
     private levels: LevelData[] = [];
 
     constructor() {

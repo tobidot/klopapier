@@ -4,7 +4,7 @@ import IsHumanComponent from "../components/IsHumanComponent";
 import MovingComponent from "../components/MovingComponent";
 import SpawnItemsComponent from "../components/SpawnItemsComponent";
 import Spray from "./Spray";
-import Paperroll from "./Klopapier";
+import Paperroll from "./Paperroll";
 import Nudel from "./Nudel";
 import VisualComponent from "../components/VisualComponent";
 import { ImageID } from "../../assets/ImageResources";

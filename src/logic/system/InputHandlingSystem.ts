@@ -7,6 +7,7 @@ import InputOpenMenuTask from "../tasks/InputOpenMenutask";
 import InputTogglePauseTask from "../tasks/InputTogglePauseTask";
 import Game from "../../Game";
 import RestartLevelSystemEvent from "./events/RestartLevelSystemEvent";
+import InputUsePaperTask from "../tasks/InputUsePaperTask";
 
 
 export default class InputHandlingSystem extends System {
@@ -24,7 +25,7 @@ export default class InputHandlingSystem extends System {
             return true;
         }
         input.on_use_paper = (): boolean => {
-            this.tasks.push(new InputUseSprayTask());
+            this.tasks.push(new InputUsePaperTask());
             return true;
         }
         input.on_eat = (): boolean => {

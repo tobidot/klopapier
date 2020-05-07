@@ -6,8 +6,9 @@ export enum CollisionGroups {
     COLLECTABLE = 0b1,
     INTERACTABLE = 0b10,
     MOVEABLE = 0b100,
+    PURIFIED = 0b1000,
 
-    UNPASSABLE = 0b1111,
+    UNPASSABLE = 0b11111,
 }
 
 export class PositionComponent extends MapObjectComponent {

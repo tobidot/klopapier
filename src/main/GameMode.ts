@@ -4,4 +4,5 @@ export enum GameMode {
     PLAYING,
     PAUSE,
     INTERMISSION,
+    MENU,
 }

@@ -1,4 +1,4 @@
-import MapData, { MapFieldData } from "./MapData"; import { TerrainTypeID } from "../assets/TerrainResources"; import Wall from "../logic/objects/Wall"; import Spray from "../logic/objects/Spray"; import Agent from "../logic/objects/Agent"; import Virus from "../logic/objects/Virus"; import Paperroll from "../logic/objects/Klopapier"; import Nudel from "../logic/objects/Nudel";
+import MapData, { MapFieldData } from "./MapData"; import { TerrainTypeID } from "../assets/TerrainResources"; import Wall from "../logic/objects/Wall"; import Spray from "../logic/objects/Spray"; import Agent from "../logic/objects/Agent"; import Virus from "../logic/objects/Virus"; import Paperroll from "../logic/objects/Paperroll"; import Nudel from "../logic/objects/Nudel";
 import ClinicalPalette from "../logic/objects/ClinicalPallette";
 import Toilet from "../logic/objects/Toilet";
 import Dish from "../logic/objects/Dish";

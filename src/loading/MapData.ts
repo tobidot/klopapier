@@ -1,4 +1,4 @@
-import Agent from "../logic/objects/Agent"; import Spray from "../logic/objects/Spray"; import Nudel from "../logic/objects/Nudel"; import Paperroll from "../logic/objects/Klopapier"; import Virus from "../logic/objects/Virus"; import Wall from "../logic/objects/Wall"; import { TerrainTypeID } from "../assets/TerrainResources"; import { Direction } from "../ts_library/space/Direction";
+import Agent from "../logic/objects/Agent"; import Spray from "../logic/objects/Spray"; import Nudel from "../logic/objects/Nudel"; import Paperroll from "../logic/objects/Paperroll"; import Virus from "../logic/objects/Virus"; import Wall from "../logic/objects/Wall"; import { TerrainTypeID } from "../assets/TerrainResources"; import { Direction } from "../ts_library/space/Direction";
 import ClinicalPalette from "../logic/objects/ClinicalPallette";
 import Dish from "../logic/objects/Dish";
 import Toilet from "../logic/objects/Toilet";

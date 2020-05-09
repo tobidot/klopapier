@@ -23,8 +23,7 @@ export default class Game {
     //private players: Array<Player>;
     private input_delegator: InputDelegator;
 
-    // 
-    private tasks: Array<Task> = [];
+    //
     private systems: Array<System> = [];
     private game_state: GameState;
 
@@ -126,90 +125,9 @@ export default class Game {
     }
 
     update(delta_seconds: number) {
-        // keep an eye on win/loose condition
-        // this.infection_count = this.objects.reduce((count, object) => object instanceof Virus ? count + 1 : count, 0);
-
-        // -- Spawn Items
-        // this.time_to_refresh_items -= delta_seconds;
-        // const should_refreshing_items = this.time_to_refresh_items < 0;
-        // const chance_to_spawn_items = Math.min(0.1, 8 / (this.day * (this.day + 2) + 70));
-        // if (should_refreshing_items) this.time_to_refresh_items += 4;
-        // this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
-        //     if (!should_refreshing_items) return field;
-        //     if (field.objects) return field;
-        //     if (Math.random() < chance_to_spawn_items || this.bad_luck_protection > 1) {
-        //         this.bad_luck_protection = 0;
-        //         switch (field.terrain.type) {
-        //             case TerrainTypeID.INDOOR_TOILET:
-        //                 this.create_object(Paperroll, field.location);
-        //                 break;
-        //             case TerrainTypeID.INDOOR_TABLE:
-        //                 this.create_object(Nudel, field.location);
-        //                 break;
-        //             case TerrainTypeID.INDOOR_CLINICAL_PALLETTE:
-        //                 this.create_object(Spray, field.location);
-        //                 break;
-        //         }
-        //     } else {
-        //         this.bad_luck_protection += chance_to_spawn_items;
-        //     }
-        //     return field;
-        // });
-
-
-        // Destroy Paper
-        // if (this.time_of_day >= this.paper_kiled + 1) {
-        //     this.paper_kiled = Math.floor(this.time_of_day);
-        //     const config_chance_for_paper_to_enflame = 0.01;
-        //     this.fires = this.fires.reduce((new_list: Point[], pos: Point): Point[] => {
-        //         const field = this.world_map.at(pos);
-        //         [Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP].map((direction: Direction) => {
-        //             const target = pos.add(direction_to_point(direction, 1));
-        //             const target_field = this.world_map.at(target);
-        //             if (target_field && target_field.terrain.variation_key === "with_paper") {
-        //                 this.world_map.effect(target);
-        //                 this.world_map.update_field_at_point(target, {
-        //                     terrain: {
-        //                         type: target_field.terrain.type,
-        //                         variation_key: "default",
-        //                     }
-        //                 });
-        //                 new_list.push(target);
-        //             }
-        //         });
-        //         return new_list;
-        //     }, new Array<Point>());
-
-        //     if (this.time_of_day >= 8 && this.time_of_day < 16) {
-        //         this.world_map.map_fields_in_rect(this.world_map.get_map_boundries(), (field: Field) => {
-        //             if (field.terrain.type === TerrainTypeID.OUTDOOR_GRAS && field.terrain.variation_key === "with_paper") {
-        //                 if (Math.random() < config_chance_for_paper_to_enflame) {
-        //                     const target_pos = field.location;
-        //                     this.world_map.effect(target_pos);
-        //                     this.fires.push(target_pos);
-        //                     return Object.assign({}, field, {
-        //                         terrain: {
-        //                             type: field.terrain.type,
-        //                             variation_key: "default",
-        //                         }
-        //                     });
-        //                 }
-        //             }
-        //             return field;
-        //         });
-        //     }
-        //     this.fires = [...new Set(this.fires)];
-        // }
-
         this.game_state = this.systems.reduce((game_state, system) => {
             return system.update(delta_seconds, this.game_state);
         }, this.game_state);
-
-        // if (!this.has_won && this.objects.filter((object) => object instanceof Virus).length === 0) {
-        //     this.has_won = true;
-        //     this.current_level = (this.current_level + 1) % this.levels.length;
-        // }
-        // if (!this.has_lost && this.object.is_destroyed()) this.has_lost = true;
     }
 
     draw(delta_seconds: number) {
@@ -218,5 +136,3 @@ export default class Game {
         this.visualizer.display(delta_seconds, this.game_state);
     }
 }
-
-//type CreateableObjectTypes = typeof Spray | typeof Nudel | typeof Paperroll | typeof Virus;

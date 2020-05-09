@@ -8,18 +8,19 @@ export default class WinOrLooseSystem extends System {
 
     public update(delta_seconds: number, game_state: GameState): GameState {
         if (game_state.calculated.remaining_humans <= 0) {
-            const post_game_state: PostGameStats = {
+            const post_game_stats: PostGameStats = {
                 won_or_lost: GameResult.LOST
             };
             System.events.trigger_event(new RestartLevelSystemEvent());
-            return Object.assign(game_state, { modus: GameMode.INTERMISSION, post_game_state });
+            return Object.assign(game_state, { modus: GameMode.INTERMISSION, post_game_stats });
         }
         if (game_state.calculated.remaining_virusses <= 0) {
-            const post_game_state: PostGameStats = {
+            debugger;
+            const post_game_stats: PostGameStats = {
                 won_or_lost: GameResult.WON
             };
             System.events.trigger_event(new LoadNextLevelSystemEvent());
-            return Object.assign(game_state, { modus: GameMode.INTERMISSION, post_game_state });
+            return Object.assign(game_state, { modus: GameMode.INTERMISSION, post_game_stats });
         }
         return game_state;
     }

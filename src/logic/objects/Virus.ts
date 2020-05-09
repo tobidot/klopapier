@@ -20,7 +20,7 @@ export default class Virus extends MapObject {
         this.add(position);
 
         let moving = new MovingComponent();
-        moving.time_needed_to_move = 0.125;
+        moving.time_needed_to_move = 0.0625;
         this.add(moving);
 
         let spread = new InfectedSpreadComponent();
@@ -32,7 +32,7 @@ export default class Virus extends MapObject {
         let walking = new InfectedWalkingComponent();
         this.add(walking);
         walking.steps_interval_in_seconds = 0.125;
-        walking.chance_to_move = 1;
+        walking.chance_to_move = 2;
 
         let hitpoints = new HitPointsComponent();
         hitpoints.current = hitpoints.max = 10;
